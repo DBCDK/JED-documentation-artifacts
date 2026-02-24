@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jed-schema.json",
+  "title": "JED - JSON Expanded Data for a work",
+  "description": "JSON data model for bibliographic data describing works. It is based on both danMARC2 and DKABM data, and the origin of data right now also refers to internal Corepo fields. The data model is approximately 80% the same as the JED that is exposed in the FBI-API, as there are some variations for practical reasons.",
+  "version": "1.3",
+  "type": "object",
+  "javaName": "Work",
+  "required": [
+    "workId",
+    "titles",
+    "fictionNonfiction",
+    "materialTypes",
+    "subjects",
+    "workTypes",
+    "manifestations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "workId": {
+      "$ref": "common-jed-tags.json#/definitions/workId"
+    },
+    "marcId": {
+      "$ref": "common-jed-tags.json#/definitions/marcId"
+    },
+    "exportTime": {
+      "description": "ISO-8601 timestamp of when the work was exported from Corepo",
+      "type": "string",
+      "existingJavaType": "java.time.Instant"
+    },
+    "titles": {
+      "description": "Different kinds of titles for this work",
+      "type": "object",
+      "javaName": "WorkTitles",
+      "additionalProperties": false,
+      "required": [
+        "main",
+        "full",
+        "sort"
+      ],
+      "properties": {
+        "main": {
+          "description": "The main title(s) of the work, - array because some publications contain more than one work",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/title"
+          }
+        },
+        "full": {
+          "description": "The full title(s) of the work including subtitles etc.",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleFull"
+          },
+          "origin": "Marc field 245 excluding subfield ø / DKABM dc:title dkdcplus:full"
+        },
+        "sort": {
+          "$ref": "common-jed-tags.json#/definitions/titleSort"
+        },
+        "original": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleOriginal"
+          }
+        },
+        "parallel": {
+          "description": "Titles (in other languages) parallel to the main title of the work",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleParallel"
+          }
+        },
+        "titlePlusLanguage": {
+          "$ref": "common-jed-tags.json#/definitions/titlePlusLanguage"
+        },
+        "standard": {
+          "$ref": "common-jed-tags.json#/definitions/titleStandard"
+        },
+        "translated": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleTranslated"
+          }
+        },
+        "tvSeries": {
+          "description": "The individual title elements if the publication is a tv-series (season/episode/disc etc)",
+          "$ref": "common-jed-tags.json#/definitions/tvSeries"
+        }
+      }
+    },
+    "abstract": {
+      "$ref": "common-jed-tags.json#/definitions/abstract"
+    },
+    "creators": {
+      "description": "Creators of the work i.e. primary authors, illustrators, directors, composers etc.",
+      "type": "object",
+      "javaName": "WorkCreators",
+      "properties": {
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "corporations": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        }
+      }
+    },
+    "dk5MainEntry": {
+      "description": "DK5 classification, main entry for this work",
+      "type": "object",
+      "additionalProperties": false,
+      "origin": "Marc field 652mo / DKABM dc:subject dkdcplus:DK5",
+      "required": [
+        "display",
+        "code",
+        "dk5Heading"
+      ],
+      "properties": {
+        "code": {
+          "description": "Main DK5 classification code",
+          "type": "string",
+          "origin": "Marc field 652mo / DKABM dc:subject dkdcplus:DK5"
+        },
+        "display": {
+          "type": "string",
+          "description": "A display string with the classification code and a possible subject related to the 'code'.",
+          "origin": "The value of 'code' + the value of 'subject'."
+        },
+        "dk5Heading": {
+          "type": "string",
+          "description": "The DK5 subject heading for the classification code",
+          "origin": "Heading from the DK5 classification system / DKABM dc:subject xsi:type='dkdcplus:DK5-Text'"
+        }
+      }
+    },
+    "fictionNonfiction": {
+      "$ref": "common-jed-tags.json#/definitions/fictionNonfiction"
+    },
+    "materialTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/materialType"
+      }
+    },
+    "relations": {
+      "$ref": "common-jed-tags.json#/definitions/relations"
+    },
+    "series": {
+      "description": "Series for this work",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/series"
+      }
+    },
+    "universe": {
+      "description": "Literary/movie universe this work is part of, e.g. Wizarding World, Marvel Universe",
+      "$ref": "common-jed-tags.json#/definitions/universe"
+    },
+    "subjects": {
+      "description": "Subjects for this work",
+      "type": "object",
+      "javaName": "WorkSubjects",
+      "additionalProperties": false,
+      "properties": {
+        "dbcVerified": {
+          "description": "Only DBC verified subjects for this work, based on subjects from all manifestations in this work",
+          "origin": "Marc field 666,667",
+          "$ref": "common-jed-tags.json#/definitions/subjects"
+        },
+        "all": {
+          "description": "All subjects for this work, based on subjects from all manifestations in this work",
+          "origin": "Marc field 033, 600, 610, 620, 621, 622, 630, 631, 632, 633, 634, 645, 650, 651, 660, 661, 662, 665, 666, 667, 670 / DKABM dc:subject",
+          "$ref": "common-jed-tags.json#/definitions/subjects"
+        }
+      }
+    },
+    "genreAndForm": {
+      "description": "The genre and (literary) form of this work",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/genreAndForm"
+      }
+    },
+    "firstPublicationDate": {
+      "description": "The publication date of the earliest manifestation in this work",
+      "type": "string",
+      "origin": "The oldest publication date in this work based on edition.publicationDateForRanking"
+    },
+    "latestPublicationDate": {
+      "description": "The publication date of the latest manifestation in this work",
+      "type": "string",
+      "origin": "The newest publication date in this work based on edition.publicationDateForRanking"
+    },
+    "workTypes": {
+      "$ref": "common-jed-tags.json#/definitions/workTypes"
+    },
+    "workYear": {
+      "$ref": "common-jed-tags.json#/definitions/workYear"
+    },
+    "mainLanguages": {
+      "$ref": "common-jed-tags.json#/definitions/languageMain"
+    },
+    "manifestations": {
+      "description": "Manifestations in this work, based on the work clusters in Corepo",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "first",
+        "latest",
+        "all"
+      ],
+      "properties": {
+        "bestRepresentations": {
+          "description": "Sorted array of pid's for each manifestation from all, where best is at [0] and least best is at the end of the array. Newer is better. Records from DBC or KB are considered better. MaterialType.specific 'bog', 'music (cd)', and 'film (dvd)' are also considered better",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "first": {
+          "description": "Pid of the oldest manifestation in this work based on publication year, if more with same publication year then oldest record creation date",
+          "type": "string"
+        },
+        "latest": {
+          "description": "Pid of the newest manifestation in this work based on publication year, if more with same publication year then newest record creation date",
+          "type": "string"
+        },
+        "order": {
+          "description": "Sorted array of pid's for each manifestation from all, where newest is at [0] and oldest is at the end of the array.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mostRelevant": {
+          "description": "Sorted array of pid's of selected manifestations from all, where only the best representation for each corepo unit in a work is selected. If the agency that asks for mostRelevant manifestations has their own record in a specific corepo unit, then that is selected instead of the best representation",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "all": {
+          "description": "All manifestations of this work",
+          "type": "array",
+          "items": {
+            "$ref": "jed-manifestation-schema.json"
+          }
+        }
+      }
+    }
+  }
+}

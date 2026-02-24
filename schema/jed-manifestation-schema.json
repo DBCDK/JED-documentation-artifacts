@@ -1,1 +1,910 @@
-{}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jed-manifestation-schema.json",
+  "title": "JED - JSON Expanded Data for a manifestation",
+  "description": "New JSON data model for bibliographic data describing manifestations. It is based on both danMARC2 and DKABM data, and the origin of data right now also refers to internal Corepo fields",
+  "version": "1.3",
+  "type": "object",
+  "javaName": "Manifestation",
+  "additionalProperties": false,
+  "required": [
+    "pid",
+    "titles",
+    "accessTypes",
+    "creators",
+    "collectionIdentifiers",
+    "fictionNonfiction",
+    "materialTypes",
+    "recordCreationDate",
+    "source",
+    "unitId"
+  ],
+  "properties": {
+    "pid": {
+      "description": "Unique identification of the manifestation e.g 870970-basis:54029519",
+      "origin": "Corepo pid",
+      "type": "string"
+    },
+    "marcId": {
+      "$ref": "common-jed-tags.json#/definitions/marcId"
+    },
+    "agencyId": {
+      "description": "The original library agency id or data submitter id",
+      "origin": "Corepo pid",
+      "type": "string"
+    },
+    "titles": {
+      "description": "Different kinds of titles for this manifestation",
+      "type": "object",
+      "javaName": "ManifestationTitles",
+      "additionalProperties": false,
+      "required": [
+        "main",
+        "full",
+        "sort"
+      ],
+      "properties": {
+        "main": {
+          "description": "The main title(s) of the manifestation, array because some publications contain more than one work",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/title"
+          }
+        },
+        "mainForSearch": {
+          "description": "The main title(s) of the manifestation minus the identifying addition",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "origin": "Marc field 245 excluding subfield ø"
+        },
+        "full": {
+          "description": "The full title(s) of the manifestation including subtitles etc",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleFull"
+          },
+          "origin": "Marc field 245 including subfield ø"
+        },
+        "fullForSearch": {
+          "description": "The full title(s) of the manifestation minus the identifying addition",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "origin": "Marc field 245 excluding subfield ø"
+        },
+        "sort": {
+          "$ref": "common-jed-tags.json#/definitions/titleSort"
+        },
+        "alternative": {
+          "description": "Alternative titles for this manifestation e.g. a title in a different language",
+          "origin": "Marc field 239u, 739u, 745, 512t in special cases / DKABM - dcterms:alternative",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "schema_org": "https://schema.org/alternateName"
+        },
+        "identifyingAddition": {
+          "description": "Information that distinguishes this manifestation from a similar manifestation with same title, e.g. 'illustrated by Ted Kirby'",
+          "origin": "Marc field 245æø, 239ø, 240ø, 509 (sheet music)",
+          "type": "string"
+        },
+        "original": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleOriginal"
+          }
+        },
+        "parallel": {
+          "description": "Titles (in other languages) parallel to the main title of the manifestation as found on the publication",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleParallel"
+          }
+        },
+        "titlePlusLanguage": {
+          "$ref": "common-jed-tags.json#/definitions/titlePlusLanguage"
+        },
+        "standard": {
+          "$ref": "common-jed-tags.json#/definitions/titleStandard"
+        },
+        "translated": {
+          "description": "Danish translation of the main title, not found on the original publication",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/titleTranslated"
+          }
+        },
+        "tvSeries": {
+          "$ref": "common-jed-tags.json#/definitions/tvSeries"
+        }
+      }
+    },
+    "abstract": {
+      "$ref": "common-jed-tags.json#/definitions/abstract"
+    },
+    "access": {
+      "description": "Different options for accessing this manifestation, like url etc",
+      "$ref": "common-jed-tags.json#/definitions/access"
+    },
+    "accessTypes": {
+      "description": "Access type of this manifestation, physical/online",
+      "origin": "admin data",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/accessType"
+      }
+    },
+    "audience": {
+      "description": "Different kinds of definitions of appropriate audience for this manifestation",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generalAudience": {
+          "description": "Appropriate audience for this manifestation",
+          "origin": "Marc field 666u, 667u and 517 / DKABM dcterms:audience with possible xsi:type='dkdcplus:pegi' or xsi:type='dkdcplus:medieraad' or dkabm dc:subject xsi:type='dkdcplus:DBCN'",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ages": {
+          "$ref": "common-jed-tags.json#/definitions/range",
+          "origin": "Marc field 666u / DKABM dc:subject[ @xsi:type = 'dkdcplus:DBCN'"
+        },
+        "childrenOrAdults": {
+          "description": "Is this material for children or adults",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/childrenOrAdult"
+          }
+        },
+        "schoolUse": {
+          "description": "Is this material for use in schools (folkeskole/ungdomsuddannelse) or is this material for use in schools by the teacher (folkeskole only)",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/schoolUse"
+          }
+        },
+        "let": {
+          "description": "LET number of this manifestation, defines the readability level, LET stands for læseegnethedstal",
+          "origin": "Marc field 042c",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "score": {
+              "description": "LET number as integer, decimals rounded to the nearest whole number, intervals present highest value, multiple values as array",
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "display": {
+              "description": "LET number, integers, decimal numbers (12,4), intervals (4-11), multiple values (05 + 06 + 07)",
+              "type": "string"
+            }
+          }
+        },
+        "levelForChildren8to12": {
+          "description": "Level of difficulty, illustrations, length, and realism in children's literature",
+          "origin": "Marc fields 664suy",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "difficulty": {
+              "description": "Level expressed as integer on a scale from 1 to 5",
+              "origin": "Marc fields 664sy",
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            "illustrationsLevel": {
+              "description": "Level expressed as integer on a scale from 1 to 5",
+              "origin": "Marc fields 664sy",
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            "length": {
+              "description": "Level expressed as integer on a scale from 1 to 5",
+              "origin": "Marc fields 664sy",
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            },
+            "realisticVsFictional": {
+              "description": "Level expressed as integer on a scale from 1 to 5",
+              "origin": "Marc fields 664uy",
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ]
+            }
+          }
+        },
+        "libraryRecommendation": {
+          "description": "Appropriate audience as recommended by the library",
+          "origin": "dkabm dcterms:audience xsi:type='dkdcplus:age'",
+          "type": "string"
+        },
+        "lix": {
+          "description": "Lix number of this manifestation, defines the readability level, Lix stands for læsbarhedsindex",
+          "origin": "Marc field 042a",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "score": {
+              "description": "Lix number as integer, decimals rounded to the nearest whole number, intervals present highest value, multiple values as array",
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "display": {
+              "description": "Lix number, integers, decimal numbers (12,4), intervals (4-11), multiple values (05 + 06 + 07)",
+              "type": "string"
+            }
+          }
+        },
+        "mediaCouncilAgeRestriction": {
+          "description": "Media Council age restriction for this manifestation",
+          "origin": "Media Council age restriction from 006d or 517a",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "display": {
+              "description": "Age restriction as noted in MARC record",
+              "type": "string"
+            },
+            "minimumAge": {
+              "description": "Minimum age as integer",
+              "type": "integer"
+            }
+          }
+        },
+        "primaryTarget": {
+          "description": "Primary target audience for this manifestation",
+          "origin": "Translation of codes from marc 008x",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "players": {
+          "description": "Number of players for board games",
+          "origin": "Marc field 505a, 512a, 517a, 666u",
+          "$ref": "common-jed-tags.json#/definitions/range"
+        },
+        "PEGI": {
+          "description": "PEGI rating for this manifestation",
+          "origin": "PEGI rating from 006e or 517a",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minimumAge": {
+              "description": "PEGI rating as integer",
+              "type": "integer"
+            },
+            "display": {
+              "description": "PEGI rating as noted in MARC record",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "catalogueCodes": {
+      "description": "Codes for which part of the Danish National Bibliography this manifestation is part of or codes for local bibliography/catalogue",
+      "origin": "Marc field 032ax",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nationalBibliography": {
+          "description": "Codes for which part of the Danish National Bibliography this manifestation is part of",
+          "origin": "Marc field 032a",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "otherCatalogues": {
+          "description": "Codes for which local bibliography/catalogue this manifestation is part of",
+          "origin": "Marc field 032x",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cataloguedPublicationStatus": {
+      "description": "The catalogued publication status of this manifestation",
+      "origin": "Marc field 990",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Catalogued publication status of this manifestation, as code",
+          "type": "string",
+          "javaName": "cataloguedPublicationStatusCode"
+        },
+        "display": {
+          "description": "Catalogued publication status of this manifestation, as displayable text",
+          "type": "string",
+          "javaName": "cataloguedPublicationStatusDisplay"
+        }
+      }
+    },
+    "cataloguingLevel": {
+      "description": "Code for cataloguing level",
+      "origin": "Marc 008v",
+      "type": "string"
+    },
+    "classifications": {
+      "description": "Classification codes for this manifestation from any classification system",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/classification"
+      }
+    },
+    "collectionIdentifiers": {
+      "description": "Collections/sources in Corepo this manifestation belongs to",
+      "origin": "Corepo admin data",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contents": {
+      "description": "Content title entries with possible creators, contributors and playing time for music tracks, sheet music titles, articles, poems, short stories etc.",
+      "origin": "Marc fields 530, 534 and 795 + 770 and 780",
+      "type": "array",
+      "additionalProperties": false,
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/contentsEntity"
+      }
+    },
+    "contributors": {
+      "description": "Contributors to the manifestation, actors, illustrators etc",
+      "type": "object",
+      "properties": {
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "corporations": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        }
+      }
+    },
+    "contributorsFromDescription": {
+      "description": "Additional contributors of this manifestation as described on the publication. E.g. 'på dansk ved Vivi Berendt'",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "origin": "Marc field 245fj (possibly 513f?)"
+    },
+    "creators": {
+      "description": "Primary creators of the manifestation e.g. authors, directors, musicians etc",
+      "type": "object",
+      "javaName": "ManifestationCreators",
+      "properties": {
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "corporations": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        }
+      }
+    },
+    "creatorsFromDescription": {
+      "description": "Additional creators of this manifestation as described on the publication. E.g. 'tekst af William Warren'",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "origin": "Marc field 245eik (possibly 513eij)"
+    },
+    "dateFirstEdition": {
+      "description": "The first edition date found in the manifestation",
+      "origin": "Marc field 520",
+      "$ref": "common-jed-tags.json#/definitions/publicationYear"
+    },
+    "edition": {
+      "$ref": "common-jed-tags.json#/definitions/edition"
+    },
+    "faustNumber": {
+      "description": "The local id as faust number, if the agency uses faust numbers - an integer used for internal administration. This is for FBI-343, where we need to filter a SolR response according to an integer list from a webservice.",
+      "origin": "Corepo local id",
+      "type": "number"
+    },
+    "fictionNonfiction": {
+      "$ref": "common-jed-tags.json#/definitions/fictionNonfiction"
+    },
+    "gamePlatform": {
+      "description": "The gameplatform of the manifestation, determined from known brands (xbox one, playstation 4, etc.)",
+      "origin": "Materialtypes - specific",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "genreAndForm": {
+      "description": "The genre and (literary) form of this manifestation",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/genreAndForm"
+      }
+    },
+    "hostPublication": {
+      "description": "Details about the host publications of this manifestation",
+      "type": "object",
+      "additionalProperties": false,
+      "origin": "Marc field 557, 558 / DKABM dcterms:isPartOf",
+      "required": [
+        "title",
+        "summary"
+      ],
+      "properties": {
+        "title": {
+          "description": "Title of the publication this manifestation can be found in",
+          "origin": "Marc field 557a/558a",
+          "type": "string"
+        },
+        "creator": {
+          "description": "Creator of the host publication if host publication is a book",
+          "origin": "Marc field 558e",
+          "type": "string"
+        },
+        "edition": {
+          "description": "Edition statement for the host publication",
+          "origin": "Marc field 558w,",
+          "type": "string"
+        },
+        "issn": {
+          "description": "ISSN of the publication this manifestation can be found in",
+          "origin": "Marc field 557z,",
+          "type": "string"
+        },
+        "isbn": {
+          "description": "ISBN of the publication this manifestation can be found in",
+          "origin": "Marc field 558zr",
+          "type": "string"
+        },
+        "issue": {
+          "description": "The issue of the publication this manifestation can be found in",
+          "origin": "Marc field 557v",
+          "type": "string"
+        },
+        "notes": {
+          "description": "Notes about the publication where this manifestation can be found in",
+          "origin": "Marc field 557l,558l",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pages": {
+          "description": "The pages in the publication where this manifestation can be found in",
+          "origin": "Marc field 557k,558g",
+          "type": "string"
+        },
+        "publisher": {
+          "description": "The publisher of the publication where this manifestation can be found in",
+          "origin": "Marc field 557i,558i",
+          "type": "string"
+        },
+        "publicationType": {
+          "description": "The publication type this manifestation can be found in",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "display": {
+              "description": "The publication type as display text",
+              "type": "string"
+            },
+            "code": {
+              "description": "The publication type  as enum",
+              "enum": [
+                "NEWSPAPER",
+                "JOURNAL",
+                "OTHER"
+              ],
+              "type": "string",
+              "javaName": "PublicationTypeEnum"
+            }
+          }
+        },
+        "section": {
+          "description": "The section of the publication this manifestation can be found in",
+          "origin": "Marc field 300a",
+          "type": "string"
+        },
+        "series": {
+          "description": "Series of the publication this manifestation can be found in",
+          "origin": "Marc field 558sv",
+          "$ref": "common-jed-tags.json#/definitions/series"
+        },
+        "volume": {
+          "description": "The volume of the publication this manifestation can be found in",
+          "origin": "Marc field 557v/558v",
+          "type": "string"
+        },
+        "year": {
+          "description": "The publication year of the publication this manifestation can be found in",
+          "origin": "Marc field 557j/558j",
+          "$ref": "common-jed-tags.json#/definitions/publicationYear"
+        },
+        "summary": {
+          "description": "All details about the publication this manifestation can be found in",
+          "origin": "Marc field 557, 558 / DKABM dcterms:isPartOf",
+          "type": "string"
+        }
+      }
+    },
+    "identifiers": {
+      "description": "Identifiers for this manifestation - often used for search indexes",
+      "origin": "Marc field 002 and more / DKABM dc:identifier",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/identifier"
+      }
+    },
+    "illAutomationMaterialGroup": {
+      "description": "International Library Loan (ILL) material group for this manifestation",
+      "origin": "Marc field 008 and 009",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "description": "ILL material group expressed as integer",
+          "type": "integer",
+          "javaName": "IllMaterialGroupCode",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            0
+          ]
+        },
+        "name": {
+          "description": "Displayable, associated and fixed text for the ILL material group",
+          "type": "string",
+          "additionalProperties": false
+        }
+      }
+    },
+    "languages": {
+      "description": "Languages in this manifestation",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "description": "Main language of this manifestation",
+          "$ref": "common-jed-tags.json#/definitions/languageMain"
+        },
+        "original": {
+          "description": "Original language of this manifestation",
+          "$ref": "common-jed-tags.json#/definitions/languageOriginal"
+        },
+        "parallel": {
+          "description": "Parallel languages of this manifestation, e.g. if more languages are printed in the same book",
+          "$ref": "common-jed-tags.json#/definitions/languages",
+          "origin": "Marc field 041p"
+        },
+        "spoken": {
+          "description": "Spoken language in this manifestation e.g. dubbed/synchronized language in movie",
+          "$ref": "common-jed-tags.json#/definitions/languages",
+          "origin": "Marc field 041s / DKABM dc:language xsi:type='dkdcplus:spoken'"
+        },
+        "subtitles": {
+          "description": "Subtitles in this manifestation",
+          "$ref": "common-jed-tags.json#/definitions/languages",
+          "origin": "Marc field 041u / DKABM dc:language with xsi:type='dkdcplus:subtitles'",
+          "schema_org": "https://schema.org/subtitleLanguage"
+        },
+        "abstract": {
+          "description": "Summary/abstract languages of this manifestation, if the manifestation contains short summaries of the content in another language",
+          "$ref": "common-jed-tags.json#/definitions/languages",
+          "origin": "Marc field 041d"
+        },
+        "notes": {
+          "description": "Notes about the language or alphabet in this manifestation - e.g. 'Signaturforklaring på dansk, grønlandsk og engelsk'",
+          "origin": "Marc field 508",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "forVisuallyImpaired": {
+          "description": "read languages for the visually impaired'",
+          "$ref": "common-jed-tags.json#/definitions/forVisuallyImpaired"
+        },
+        "forHearingImpaired": {
+          "description": "texted languages for the hearing impaired'",
+          "$ref": "common-jed-tags.json#/definitions/forHearingImpaired"
+        }
+      }
+    },
+    "latestPrinting": {
+      "description": "The latest printing of this manifestation e.g. 2. oplag",
+      "origin": "Marc field 008az, 521bgc or 250x / DKABM dc:description dkdcplus:version",
+      "$ref": "common-jed-tags.json#/definitions/latestPrinting"
+    },
+    "localId": {
+      "description": "Identification of the local id of this manifestation",
+      "origin": "Corepo local id",
+      "type": "string"
+    },
+    "manifestationParts": {
+      "description": "Tracks on music album, sheet music content, or articles/short stories etc. in this manifestation",
+      "origin": "Marc field 795/770 / DKABM dcterms:hasPart",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parts",
+        "type"
+      ],
+      "properties": {
+        "heading": {
+          "description": "Heading for the music content note",
+          "origin": "Marc field 531",
+          "type": "string"
+        },
+        "parts": {
+          "description": "The creator and title etc. of the individual parts",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/manifestationPart"
+          }
+        },
+        "type": {
+          "description": "The type of manifestation parts, is this music tracks, book parts etc.",
+          "enum": [
+            "MUSIC_TRACKS",
+            "SHEET_MUSIC_CONTENT",
+            "PARTS_OF_BOOK",
+            "NOT_SPECIFIED"
+          ],
+          "type": "string",
+          "javaName": "ManifestationPartsType"
+        }
+      }
+    },
+    "materialTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/materialType"
+      }
+    },
+    "notes": {
+      "description": "Notes about the manifestation",
+      "origin": "Marc field 501, 502, 505, 508, 512, 520, 534, 559 / DKABM dc:description",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/note"
+      }
+    },
+    "relatedPublications": {
+      "description": "Notes about relations to this book/periodical/journal, - like previous names or related journals",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/relatedPublication"
+      }
+    },
+    "relations": {
+      "$ref": "common-jed-tags.json#/definitions/relations"
+    },
+    "objectId": {
+      "description": "Identification of the which object this manifestation belongs to in Corepo",
+      "origin": "Corepo object id",
+      "type": "string"
+    },
+    "physicalDescription": {
+      "description": "New physical description of this manifestation like extent (pages/minutes), illustrations etc.",
+      "type": "object",
+      "javaName": "newPhysicalDescription",
+      "additionalProperties": false,
+      "schema_org": "https://schema.org/materialExtent",
+      "origin": "Marc field 300 / DKABM dc:format and dcterms:extent",
+      "required": [],
+      "properties": {
+        "summaryFull": {
+          "description": "A summary of the physical description of this manifestation like extent (pages/minutes), illustrations etc.",
+          "origin": "Marc field 300 / DKABM dc:format and dcterms:extent",
+          "type": "string",
+          "javaName": "newPhysicalDescriptionSummaryFull"
+        },
+        "materialUnits": {
+          "description": "Physical description of each material type unit",
+          "origin": "Marc field 300 and DKABM dcterms:extent",
+          "type": "array",
+          "javaName": "newPhysicalDescriptionMaterialUnits",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/materialUnit"
+          }
+        },
+        "numberOfPages": {
+          "description": "Number of pages of the manifestation as number",
+          "origin": "Marc field 300a and DKABM dcterms:extent",
+          "type": "integer",
+          "javaName": "newPhysicalDescriptionNumberOfPages"
+        },
+        "accompanyingMaterial": {
+          "description": "Material that comes with the manifestation (bilag)",
+          "origin": "Marc field 300d",
+          "type": "string",
+          "javaName": "newPhysicalDescriptionAccompanyingMaterial"
+        }
+      }
+    },
+    "publisher": {
+      "description": "Publisher of this manifestation",
+      "origin": "Marc field 260b / DKABM dc:publisher",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "schema_org": "https://schema.org/publisher"
+    },
+    "placeOfPublication": {
+      "description": "Place(s) of publication as extracted from MARC 260a or 264a, with brackets removed",
+      "origin": "Marc field 260a or 264a",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recordCreationDate": {
+      "description": "The creation date of the record describing this manifestation in the format YYYYMMDD",
+      "origin": "Marc 001d or Corepo admin data creationDate",
+      "type": "string"
+    },
+    "review": {
+      "description": "If this manifestation is a review, then content from the review is found here, like ratings or the actual review",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewByLibrarians": {
+          "description": "If this manifestation is a review, then content from the review is found here",
+          "origin": "marc 559 abcdegfhij",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/reviewElement"
+          }
+        },
+        "rating": {
+          "description": "A rating of the reviewed manifestation",
+          "origin": "marc 504 a",
+          "type": "string"
+        }
+      }
+    },
+    "series": {
+      "description": "Series for this manifestation",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/series"
+      }
+    },
+    "sheetMusicCategories": {
+      "description": "Material that can be identified as sheet music",
+      "$ref": "common-jed-tags.json#/definitions/sheetMusicCategories"
+    },
+    "shelfmark": {
+      "description": "Information about on which shelf in the library this manifestation can be found",
+      "origin": "Marc field 652mo,039",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shelfmark"
+      ],
+      "properties": {
+        "shelfmark": {
+          "description": "The actual shelfmark - e.g. information about on which shelf in the library this manifestation can be found, e.g. 99.4",
+          "origin": "Marc field 652mo,654,039",
+          "type": "string"
+        },
+        "postfix": {
+          "description": "A postfix to the shelfmark, eg. 99.4 Christensen, Inger. f. 1935",
+          "type": "string",
+          "origin": "Marc field 100,110,239,245"
+        }
+      }
+    },
+    "source": {
+      "description": "The source of the manifestation, e.g. own library catalogue (Bibliotekskatalog) or online source e.g. Filmstriben, Ebook Central, eReolen Global etc.",
+      "origin": "DKABM - ac:source",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subjects": {
+      "description": "Subjects for this manifestation",
+      "type": "object",
+      "javaName": "ManifestationSubjects",
+      "additionalProperties": false,
+      "properties": {
+        "dbcVerified": {
+          "description": "Only DBC verified subjects for this manifestation",
+          "origin": "Marc field 666,667",
+          "$ref": "common-jed-tags.json#/definitions/subjects"
+        },
+        "all": {
+          "description": "All subjects for this manifestation",
+          "origin": "Marc field 033, 600, 610, 620, 621, 622, 630, 631, 632, 633, 634, 645, 650, 651, 660, 661, 662, 665, 666, 667, 670 / DKABM dc:subject",
+          "$ref": "common-jed-tags.json#/definitions/subjects"
+        }
+      }
+    },
+    "tableOfContents": {
+      "$ref": "common-jed-tags.json#/definitions/tableOfContents"
+    },
+    "unitId": {
+      "description": "Identification of the which unit this manifestation belongs to in Corepo unit:538597",
+      "origin": "Corepo unit id",
+      "type": "string"
+    },
+    "universe": {
+      "description": "Literary/movie universe this work is part of, e.g. Wizarding World, Marvel Universe",
+      "$ref": "common-jed-tags.json#/definitions/universe"
+    },
+    "volume": {
+      "description": "Information about which volume this manifestation is in multi volume work",
+      "origin": "Marc field 245gø",
+      "type": "string"
+    },
+    "workId": {
+      "$ref": "common-jed-tags.json#/definitions/workId"
+    },
+    "workTypes": {
+      "$ref": "common-jed-tags.json#/definitions/workTypes"
+    },
+    "workYear": {
+      "$ref": "common-jed-tags.json#/definitions/workYear"
+    }
+  }
+}

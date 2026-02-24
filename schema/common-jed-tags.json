@@ -1,1 +1,2233 @@
-{}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "common-jed-tags.json",
+  "version": "1.3",
+  "title": "JED Common tags",
+  "description": "Common tags used in JED schema for both work and manifestation",
+  "type": "object",
+  "definitions": {
+    "abstract": {
+      "description": "Abstract of the entity",
+      "origin": "Marc field 504 / DKABM dcterms:abstract",
+      "schema_org": "https://schema.org/abstract",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "accessType": {
+      "description": "Access type of this manifestation, physical/online",
+      "origin": "Corepo admin data",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "display"],
+      "properties": {
+        "code": {
+          "description": "Access type of this manifestation, physical/online as enum",
+          "type": "string",
+          "enum": ["PHYSICAL", "ONLINE", "UNKNOWN"],
+          "javaName": "AccesTypeCode"
+        },
+        "display": {
+          "description": "Access type of this manifestation, physical/online as displayable text",
+          "type": "string",
+          "javaName": "AccessTypeDisplay"
+        }
+      }
+    },
+    "accessUrl": {
+      "description": "URL information for this manifestation",
+      "origin": "Marc field 856, 032",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": {
+        "url": {
+          "description": "The actual URL for this manifestation",
+          "type": "string",
+          "origin": "Marc field 856u"
+        },
+        "note": {
+          "description": "A note related to the URL for this manifestation",
+          "type": "string",
+          "origin": "Marc field 856z"
+        },
+        "urlText": {
+          "description": "Description/type of URL as given in manifestation",
+          "origin": "Marc field 856y",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of  url",
+          "javaName": "UrlType",
+          "origin": "Marc field 856 *3",
+          "type": "string",
+          "enum": [
+            "RESOURCE",
+            "SAMPLE",
+            "THUMBNAIL",
+            "IMAGE",
+            "TABLE_OF_CONTENTS",
+            "OTHER"
+          ]
+        }
+      }
+    },
+    "access": {
+      "description": "Different options for accessing this manifestation, like url etc",
+      "origin": "Marc field 856, 032",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accessUrls": {
+          "description": "URL information for this manifestation",
+          "origin": "Marc field 856, 032",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/accessUrl"
+          }
+        },
+        "dbcWebArchive": {
+          "description": "Is a digital copy of this manifestation saved in the DBC Web Archive",
+          "origin": "Marc field 032x with ARK code",
+          "type": "boolean"
+        },
+        "ereol": {
+          "description": "Information related to a manifestation that is accessible on eReolen.dk or eReolen Go",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/ereol"
+          }
+        },
+        "infomediaService": {
+          "description": "If this manifestation can be accessed via Infomedia then ID and license is provided",
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {
+              "description": "Infomedia Id",
+              "origin": "Marc field n01a",
+              "type": "string"
+            },
+            "license": {
+              "description": "Enum stating who can access this article",
+              "type": "string",
+              "enum": ["UNRESTRICTED", "PROFESSIONALS"]
+            }
+          }
+        },
+        "interLibraryLoanIsPossible": {
+          "description": "Is true when manifestation can be borrowed via interlibrary loan (ILL)",
+          "origin": "Marc field 008,096",
+          "type": "boolean"
+        },
+        "digitalArticleService": {
+          "description": "ISSN used for looking up whether an article can be accessed via Digital Artikel Service",
+          "type": "object",
+          "required": ["issn"],
+          "properties": {
+            "issn": {
+              "description": "ISSN of the host publication",
+              "origin": "Marc field 557z",
+              "type": "string"
+            }
+          }
+        },
+        "openUrl": {
+          "description": "OpenUrl used for link resolving",
+          "origin": "Corepo hasOnlineAccess relation",
+          "type": "string"
+        }
+      }
+    },
+    "childrenOrAdult": {
+      "description": "Is this material for children or adults",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "display"],
+      "properties": {
+        "code": {
+          "description": "Is this material for children or adults as enum",
+          "type": "string",
+          "enum": ["FOR_CHILDREN", "FOR_ADULTS"],
+          "origin": "DKABM dcterms:audience",
+          "javaName": "ChildrenOrAdultCode"
+        },
+        "display": {
+          "description": "Is this material for children or adults as displayable text 'til børn' or 'til voksne'",
+          "type": "string",
+          "origin": "DKABM dcterms:audience",
+          "javaName": "ChildrenOrAdultDisplay"
+        }
+      }
+    },
+    "childrenTopics": {
+      "description": "Subject describing selected topics for children, and a rating.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display", "rating"],
+      "properties": {
+        "type": {
+          "description": "The subject type",
+          "enum": ["TOPIC_CHILDREN"],
+          "type": "string",
+          "javaName": "ChildrenSubjectType"
+        },
+        "display": {
+          "description": "The actual specific children subject",
+          "type": "string",
+          "origin": "Marc field 664e"
+        },
+        "rating": {
+          "description": "The connected subjects rating",
+          "enum": [1, 2, 3, 4, 5],
+          "type": "integer",
+          "origin": "Marc field 664y",
+          "javaName": "ChildrenSubjectRating"
+        }
+      }
+    },
+    "classification": {
+      "description": "Details about the classification of this manifestation. Used for DK5 and all other classification systems",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "display", "system"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The classification code",
+          "origin": "Marc field 652/654 (dk5), 050-082 /  DKABM** (dk5 only):** xsi:type='dkdcplus:DK5'"
+        },
+        "display": {
+          "type": "string",
+          "description": "A display string with the classification code + (DK5 only) a possible subject related to the 'code'.",
+          "origin": "The value of 'code' + the value of 'subject'."
+        },
+        "dk5Heading": {
+          "type": "string",
+          "description": "DK5 only. The DK5 subject heading for the classification code",
+          "origin": "Heading from the DK5 classification system / DKABM dc:subject xsi:type='dkdcplus:DK5-Text'"
+        },
+        "subject": {
+          "type": "string",
+          "description": "For DK5 only. The specific subject in some DK5 classes, e.g. persons in 99.4",
+          "origin": "Marc field 652ahbceft. No DKABM."
+        },
+        "system": {
+          "type": "string",
+          "description": "Name of the classification system"
+        },
+        "entryType": {
+          "type": "string",
+          "description": "For DK5 only. The DK5 entry type: main entry, national entry, or additional entry and marc field 652",
+          "origin": "Marc fields 652/654. Main entries: 652mo/654mo. Additional entries: 652pr/654pr. National bibliography main entry: 652n/654n. National bibliography additional entry: 652q/654q (hoved-, nationalbibliografisk, biplacering)",
+          "enum": [
+            "MAIN_ENTRY",
+            "NATIONAL_BIBLIOGRAPHY_ENTRY",
+            "ADDITIONAL_ENTRY",
+            "NATIONAL_BIBLIOGRAPHY_ADDITIONAL_ENTRY"
+          ]
+        },
+        "sort": {
+          "type": "string",
+          "description": "A string with classification code + (if DK5) some related info. String is stripped of special characters to be used for sorting",
+          "origin": "The value of 'code' + the value of 'subject'; stripped."
+        }
+      }
+    },
+    "contentsEntity": {
+      "description": "Content title entries with possible creators, contributors and playing time for music tracks, sheet music titles, articles, poems, short stories etc.",
+      "origin": "Marc fields 530, 534 and 795 + 770 and 780",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntity",
+      "required": ["type", "heading"],
+      "properties": {
+        "type": {
+          "description": "ENUM for type of content entries (music tracks, articles, fiction etc.) in this entity",
+          "type": "string",
+          "javaName": "ContentType",
+          "enum": [
+            "ARTICLES",
+            "CHAPTERS",
+            "FICTION",
+            "MUSIC_TRACKS",
+            "SHEET_MUSIC",
+            "NOT_SPECIFIED"
+          ]
+        },
+        "heading": {
+          "description": "Heading for the contents of this entity",
+          "origin": "Marc fields 530*i, 531, 534*i - or constructed heading",
+          "type": "string"
+        },
+        "contentsUnstructured": {
+          "description": "Contents text note quoted as it is from the marc field. Used for non-machine-decipherable content notes (un)formatted in only 1 subfield)",
+          "origin": "Marc fields 530*a and 534*a",
+          "type": "string"
+        },
+        "contentsStructured": {
+          "description": "Object with an array of structured entries for each content element (title, creator, contributors ...) ",
+          "origin": "Marc fields 530/534txged and 795+770/780",
+          "type": "object",
+          "additionalProperties": false,
+          "javaName": "ContentsEntityContentsStructured",
+          "required": ["entries"],
+          "properties": {
+            "titlesForSearch": {
+              "description": "Possible title variants of one or more titles quoted in the title entries of the entity",
+              "origin": "Subfield *a in marc fields 795, marked with *y0",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/contentsEntry"
+              }
+            }
+          }
+        }
+      }
+    },
+    "contentsEntry": {
+      "description": "Content entry with title and possible creator(s), contributors and (for some music and movies) playing time",
+      "origin": "Marc fields 530, 534, 795 + 770/780",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntry",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "description": "Top level title of the entry",
+          "origin": "Marc subfields 530/534tcpgx, 795acpuø",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryTitle"
+        },
+        "creators": {
+          "description": "Main creator(s) of the entry i.e. composer (classical music), artist/band (rhythmic music), author (fiction, articles). For music and sheet music always only 1 creator, for articles and fiction possibly more than 1",
+          "origin": "Marc subfields 530de, 534de, 770, 780",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryCreators"
+        },
+        "contributorsUnstructured": {
+          "description": "Additional 'authors' (lyricists, arrangers, performers/soloists etc.), quoted as strings (including possible author's statement) from the record",
+          "origin": "Marc subfields 795eij (in cases also 530e and 534e)",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryContributors"
+        },
+        "playingTime": {
+          "description": "Playing time for music tracks, quoted from the record",
+          "origin": "Marc field 795 *l",
+          "type": "string"
+        },
+        "entrySubLevel1": {
+          "description": "Possible entry data (title, creators, contributors, playingtime) subordinate to the entry's top level",
+          "origin": "Marc fields 530, 534, 795",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/contentsEntrySubLevel1"
+          }
+        }
+      }
+    },
+    "contentsEntrySubLevel1": {
+      "description": "Title and possible creators (literature only), contributors and playing time (music only) subordinate to the entry's top level",
+      "origin": "Marc fields 530, 534, 795",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntrySubLevel1",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "description": "Title subordinate to the title in the entry's top level",
+          "origin": "Marc subfields 530/534tcpx, 795acpuvø",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryTitle"
+        },
+        "creators": {
+          "description": "Main authors of articles or fiction entries only, never music or sheet music",
+          "origin": "Marc subfields 530de, 534de",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryCreators"
+        },
+        "contributorsUnstructured": {
+          "description": "Additional 'authors' (lyricists, arrangers, performers/soloists etc.) related to the title on sublevel 1, quoted as strings (including possible author's statement) from the record",
+          "origin": "Marc subfields 795eij (in cases also 530e and 534e)",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryContributors"
+        },
+        "playingTime": {
+          "description": "Playing time for music tracks",
+          "origin": "Marc field 795 *l",
+          "type": "string"
+        },
+        "entrySubLevel2": {
+          "description": "Possible entry data (title, contributors, playingtime) subordinate to the entry's sublevel 1",
+          "origin": "Marc fields 530, 534, 795",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/contentsEntrySubLevel2"
+          }
+        }
+      }
+    },
+    "contentsEntrySubLevel2": {
+      "description": "Entry data (title and possible contributors and playingtime) subordinate to the entry's sublevel 1",
+      "origin": "Marc fields 530, 534, 795",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntrySubLevel2",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "description": "Title subordinate to the title in the entry's sublevel 1",
+          "origin": "Marc 795vuø",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryTitle"
+        },
+        "contributorsUnstructured": {
+          "description": "Additional 'authors' (lyricists, arrangers, performers/soloists etc.) related to the title on sublevel 1, quoted as strings (including possible author's statement) from the record. Music and sheet music only",
+          "origin": "Marc subfields 795eij",
+          "$ref": "common-jed-tags.json#/definitions/contentsEntryContributors"
+        },
+        "playingTime": {
+          "description": "Playing time for musick tracks",
+          "origin": "Marc field 795 *l",
+          "type": "string"
+        }
+      }
+    },
+    "contentsEntryTitle": {
+      "description": "Title object of the contents entry",
+      "origin": "Marc fields 530, 534 and 795",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntryTitle",
+      "required": ["display"],
+      "properties": {
+        "display": {
+          "description": "Title of the content entry",
+          "origin": "Marc fields 530/530tcgpx and 795acpuvø.",
+          "type": "string"
+        },
+        "titlesForSearch": {
+          "description": "Possible variants of title of the content entry - for search",
+          "origin": "Marc sorting fields 530/534TGPX and 795APUVØ",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "contentsEntryCreators": {
+      "description": "Creator(s) of the entry",
+      "origin": "Marc fields 770/780 and subfields 530/534 *d and *e",
+      "type": "object",
+      "additionalProperties": false,
+      "javaName": "ContentsEntryCreators",
+      "properties": {
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "corporations": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        }
+      }
+    },
+    "contentsEntryContributors": {
+      "description": "Contributors to entry + possible function statements quoted in plain text from the marc record",
+      "origin": "Marc field 795, subfields *e, *j (all materials) and *i (classical music only)",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "corporation": {
+      "description": "Details about a corporation or conference, name, role, etc.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "nameSort", "roles", "type"],
+      "properties": {
+        "display": {
+          "type": "string",
+          "description": "The full corporation or conference name",
+          "origin": "Marc field 110,610,710,780"
+        },
+        "nameSort": {
+          "type": "string",
+          "description": "The full corporation or conference name to sort after",
+          "origin": "Marc field 110,710,780"
+        },
+        "main": {
+          "type": "string",
+          "description": "Main corporation or conference",
+          "origin": "Marc field 110,710,780as"
+        },
+        "sub": {
+          "type": "string",
+          "description": "Sub corporation or conference/meeting",
+          "origin": "Marc field 110,710,780c"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the conference",
+          "origin": "Marc field 110,710,780j"
+        },
+        "year": {
+          "type": "string",
+          "description": "Year of the conference",
+          "origin": "Marc field 110,710,780k"
+        },
+        "number": {
+          "type": "string",
+          "description": "Number of the conference",
+          "origin": "Marc field 110,710,780i"
+        },
+        "attributeToName": {
+          "type": "string",
+          "description": "Added information about the corporation, like 710 00a M. Folmer Andersene firma",
+          "origin": "Marc field 110,710,780e"
+        },
+        "roles": {
+          "description": "A list of which kinds of contributions this corporation made to this creation",
+          "origin": "Marc field 110,710,7804",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/role"
+          }
+        },
+        "type": {
+          "description": "The type of subject/creator/contributor, when corporation is listed as such",
+          "enum": ["CORPORATION"],
+          "type": "string",
+          "javaName": "CorporationType"
+        },
+        "aliases": {
+          "description": "Corporation aliases, corporation variant names",
+          "origin": "Marc field 910",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        }
+      }
+    },
+    "edition": {
+      "description": "The edition/version number and name and possible contributor statements related to the edition",
+      "type": "object",
+      "origin": "Marc field 008az, 250, 521bc / DKABM dkdcplus:version",
+      "schema_org": "https://schema.org/version",
+      "additionalProperties": false,
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Properties 'edition', 'contributorsToEdition' and 'publicationYear' as one string, e.g.: '3. udgave, revideret af Susan Munk, 2005'"
+        },
+        "edition": {
+          "type": "string",
+          "description": "The edition number and name. In case of corrected edition statements only the corrected form",
+          "origin": "Marc field 250 *b (first priority) or *a / DKABM dkdcplus:version"
+        },
+        "contributors": {
+          "description": "Quotation of contributor statements related to the edition",
+          "origin": "Marc field 250cd",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "In case of corrected edition statements and/or year: The 'incorrect' edition statement and/or year stated in the material."
+        },
+        "publicationYear": {
+          "origin": "Marc field 008az / DKABM dc:date",
+          "$ref": "#/definitions/publicationYear"
+        },
+        "publicationDateForRanking": {
+          "description": "The most specific date possible for the publication, e.g. if news article from January 24th 2019 then '2019-01-24', if journal article from October 2022 then '2022-10-01, if book from 1988 then '1988-01-01' - will be used for ranking in search engines, not for display",
+          "origin": "Marc field 557 *vV, or publication year",
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "ereol": {
+      "description": "Information related to a manifestation that is accessible on eReolen.dk or eReolen Go",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "origin", "canAlwaysBeLoaned"],
+      "properties": {
+        "url": {
+          "description": "The actual eReolen.dk URL for this manifestation",
+          "type": "string",
+          "origin": "Marc field 856u"
+        },
+        "origin": {
+          "description": "The origin, e.g. 'eReolen' or 'eReolen GO'",
+          "origin": "Derived from the url",
+          "type": "string"
+        },
+        "canAlwaysBeLoaned": {
+          "description": "Is this a manifestation that always can be loaned on ereolen.dk even if you've run out of loans this month",
+          "origin": "Marc field 032x with ERA code",
+          "type": "boolean"
+        },
+        "note": {
+          "description": "A note related to the URL for this manifestation",
+          "type": "string",
+          "origin": "Marc field 856z"
+        }
+      }
+    },
+    "latestPrinting": {
+      "description": "Information about the latest printing of this manifestation e.g.: '11. oplag, 2020'",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "printing"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Properties 'printing' and 'publicationYear' as one string, e.g.: '11. oplag, 2020'"
+        },
+        "printing": {
+          "type": "string",
+          "description": "The printing number and name",
+          "origin": "Marc field 521b or 250x"
+        },
+        "publicationYear": {
+          "description": "publication year of this printing",
+          "origin": "Marc field 008z",
+          "$ref": "#/definitions/publicationYear"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Publisher of printing when other than the original publisher of the edition (260*b)",
+          "origin": "Marc field 521g"
+        }
+      }
+    },
+    "fictionNonfiction": {
+      "description": "Overall literary category/genre of this manifestation. e.g. fiction or nonfiction. In Danish skønlitteratur/faglitteratur for literature, fiktion/nonfiktion for other types. ",
+      "type": "object",
+      "additionalProperties": false,
+      "origin": "Many different fields depending on material type, e.g. 008d, 652",
+      "required": ["display", "code"],
+      "properties": {
+        "display": {
+          "description": "Displayable overall category/genre: skønlitteratur/faglitteratur/fiktion/nonfiktion/vides ikke",
+          "type": "string",
+          "javaName": "FictionNonfictionDisplay"
+        },
+        "code": {
+          "description": "Code used for filtering",
+          "enum": ["FICTION", "NONFICTION", "NOT_SPECIFIED"],
+          "type": "string",
+          "javaName": "FictionNonfictionCode"
+        }
+      }
+    },
+    "forHearingImpaired": {
+      "description": "texted languages for the hearing impaired'",
+      "origin": "Marc field 041 *t, Marc field 508 *a, Marc field 512 *a",
+      "$ref": "#/definitions/languages"
+    },
+    "forVisuallyImpaired": {
+      "description": "read languages for the visually impaired'",
+      "origin": "Marc field 041 *q, Marc field 508 *a, Marc field 512 *a",
+      "$ref": "#/definitions/languages"
+    },
+    "genreAndForm": {
+      "type": "string",
+      "description": "The genre and (literary) form of this work",
+      "origin": "Marc field 008dj, 666om, 505 and more / DKABM dc:subject dkdcplus:genre"
+    },
+    "identifier": {
+      "description": "Identifier for this entity - often used for search indexes",
+      "origin": "Marc field 021aen, 002bd and possibly some music or movie identifier fields / DKABM dc:identifier with possible xsi:type='dkdcplus:ISBN' or xsi:type='dkdcplus:ISSN' or xsi:type='dkdcplus:ISMN'",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "description": "The type of identifier",
+          "enum": [
+            "UPC",
+            "URI",
+            "DOI",
+            "ISBN",
+            "ISSN",
+            "ISMN",
+            "MUSIC",
+            "MOVIE",
+            "PUBLIZON",
+            "NOT_SPECIFIED",
+            "ORDER_NUMBER",
+            "BARCODE"
+          ],
+          "type": "string",
+          "origin": "Marc field 002b and possibly some music or movie identifier fields",
+          "javaName": "IdentifierType"
+        },
+        "value": {
+          "type": "string",
+          "description": "The actual identifier",
+          "origin": "Marc field 002d and possibly some music or movie identifier fields / DKABM dc:identifier"
+        }
+      }
+    },
+    "language": {
+      "description": "Language as displayable text and ISO639-1 and ISO639-2 language codes",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "iso639Set1", "iso639Set2"],
+      "properties": {
+        "display": {
+          "description": "Language as displayable text",
+          "type": "string"
+        },
+        "iso639Set1": {
+          "description": "ISO639-1 language code (2 letters)",
+          "type": "string"
+        },
+        "iso639Set2": {
+          "description": "ISO639-2 language code (3 letters)",
+          "type": "string"
+        }
+      }
+    },
+    "languageMain": {
+      "description": "The main language(s) of the work's content",
+      "origin": "Marc field 008l if no field 041, otherwise: 041ap / DKABM dc:language xsi:type='dcterms:ISO639-2'",
+      "schema_org": "https://schema.org/inLanguage",
+      "$ref": "#/definitions/languages"
+    },
+    "languageOriginal": {
+      "description": "Original language of the work",
+      "origin": "Marc field 041c / DKABM dc:language xsi:type='dcterms:ISO639-2'",
+      "$ref": "#/definitions/languages"
+    },
+    "languages": {
+      "description": "Languages as displayable text and ISO639-1 and ISO639-2 language codes",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/language"
+      }
+    },
+    "materialType": {
+      "description": "The type of material of the manifestation based on bibliotek.dk types",
+      "type": "object",
+      "required": ["general", "specific"],
+      "properties": {
+        "general": {
+          "description": "The general type of material of the manifestation based on a grouping of bibliotek.dk material types",
+          "additionalProperties": false,
+          "type": "object",
+          "javaName": "GeneralMaterialType",
+          "required": ["code", "display"],
+          "properties": {
+            "code": {
+              "description": "The general type of material of the manifestation based on a grouping of bibliotek.dk material types in enums",
+              "type": "string",
+              "javaName": "GeneralMaterialTypeCode",
+              "enum": [
+                "ARTICLES",
+                "AUDIO_BOOKS",
+                "BOARD_GAMES",
+                "BOOKS",
+                "COMICS",
+                "COMPUTER_GAMES",
+                "EBOOKS",
+                "FILMS",
+                "IMAGE_MATERIALS",
+                "MUSIC",
+                "NEWSPAPER_JOURNALS",
+                "OTHER",
+                "PODCASTS",
+                "SHEET_MUSIC",
+                "TV_SERIES"
+              ]
+            },
+            "display": {
+              "description": "Display of general material type enums",
+              "type": "string"
+            }
+          }
+        },
+        "specific": {
+          "description": "The specific type of material of the manifestation based on a grouping of bibliotek.dk material types in enums",
+          "origin": "Marc field 009ag into displayable text",
+          "additionalProperties": false,
+          "type": "object",
+          "javaName": "SpecificMaterialType",
+          "required": ["code", "display"],
+          "properties": {
+            "code": {
+              "description": "The specific type of material of the manifestation based on a grouping of bibliotek.dk material types in enums",
+              "type": "string",
+              "javaName": "SpecificMaterialTypeCode",
+              "enum": [
+                "ARCHITECHTURAL_DRAWING",
+                "ART_REPRODUCTION",
+                "ARTICLE",
+                "ARTICLE_CD",
+                "ARTICLE_DVD",
+                "ARTICLE_ELECTRONIC",
+                "ARTICLE_ONLINE",
+                "ARTICLE_TAPE",
+                "AUDIO_BOOK",
+                "AUDIO_BOOK_CD",
+                "AUDIO_BOOK_CD_MP3",
+                "AUDIO_BOOK_CDROM",
+                "AUDIO_BOOK_DVD",
+                "AUDIO_BOOK_ELECTRONIC",
+                "AUDIO_BOOK_GRAMOPHONE",
+                "AUDIO_BOOK_ONLINE",
+                "AUDIO_BOOK_REEL_AUDIO_TAPE",
+                "AUDIO_BOOK_TAPE",
+                "BOARD_GAME",
+                "BOOK",
+                "BOOK_CD",
+                "BOOK_CD_MP3",
+                "BOOK_CDROM",
+                "BOOK_DVD",
+                "BOOK_DVDROM",
+                "BOOK_ELECTRONIC",
+                "BOOK_LARGE_PRINT",
+                "BRAILLE",
+                "BRAILLE_CD",
+                "BRAILLE_DVD",
+                "BRAILLE_ELECTRONIC",
+                "BRAILLE_ONLINE",
+                "BRAILLE_TAPE",
+                "BRAILLE_VIDEOTAPE",
+                "CD-I",
+                "CINEMA_FILM",
+                "COMIC",
+                "COMIC_BLURAY",
+                "COMIC_CD",
+                "COMIC_CDROM",
+                "COMIC_DVD",
+                "COMIC_DVDROM",
+                "COMIC_ELECTRONIC",
+                "COMIC_ONLINE",
+                "COMPOSITE_MATERIAL",
+                "COMPUTER_GAME",
+                "COMPUTER_GAME_BLURAY",
+                "COMPUTER_GAME_CD",
+                "COMPUTER_GAME_CDROM",
+                "COMPUTER_GAME_DVD",
+                "COMPUTER_GAME_DVDROM",
+                "COMPUTER_GAME_ELECTRONIC",
+                "COMPUTER_GAME_ONLINE",
+                "DCC_BAND",
+                "DRAWING",
+                "DVD_ROM",
+                "EBOOK",
+                "ELECTRONIC_MATERIAL",
+                "ELECTRONIC_MATERIAL_BLURAY",
+                "ELECTRONIC_MATERIAL_CD",
+                "ELECTRONIC_MATERIAL_CD_MP3",
+                "ELECTRONIC_MATERIAL_CDROM",
+                "ELECTRONIC_MATERIAL_DVD",
+                "ELECTRONIC_MATERIAL_DVDROM",
+                "ELECTRONIC_MATERIAL_GRAMOPHONE",
+                "ELECTRONIC_MATERIAL_ONLINE",
+                "ELECTRONIC_MATERIAL_REEL_AUDIO_TAPE",
+                "ELECTRONIC_MATERIAL_TAPE",
+                "ELECTRONIC_MATERIAL_VIDEOTAPE",
+                "EXHIBITION",
+                "EXHIBITION_MONTAGE",
+                "FILM",
+                "FILM_BLURAY",
+                "FILM_BLURAY_3D",
+                "FILM_BLURAY_4K",
+                "FILM_CD_MP3",
+                "FILM_CDROM",
+                "FILM_DVD",
+                "FILM_DVDROM",
+                "FILM_ELECTRONIC",
+                "FILM_GRAMOPHONE",
+                "FILM_ONLINE",
+                "FILM_REEL",
+                "FILM_REEL_AUDIO_TAPE",
+                "FILM_VIDEOTAPE",
+                "FIXED_PLATE",
+                "FLIPCHART",
+                "FLONNELLOGRAPH_MATERIAL",
+                "FLOPPY_DISK",
+                "GAMEBOY",
+                "GAMEBOY_ADVANCE",
+                "GAMEBOY_COLOR",
+                "GRAPHIC_MAGAZINE",
+                "GRAPHIC_NOVEL",
+                "GRAPHIC_NOVEL_DVD",
+                "GRAPHIC_NOVEL_ELECTRONIC",
+                "GRAPHIC_NOVEL_ONLINE",
+                "NEWSPAPER",
+                "NEWSPAPER_CD",
+                "NEWSPAPER_ELECTRONIC",
+                "NEWSPAPER_ONLINE",
+                "JOURNAL",
+                "JOURNAL_CD",
+                "JOURNAL_CDROM",
+                "JOURNAL_ELECTRONIC",
+                "JOURNAL_ONLINE",
+                "LABORTORY_MATERIAL",
+                "MAP",
+                "MAP_CD",
+                "MAP_CDROM",
+                "MAP_DVD",
+                "MAP_DVDROM",
+                "MAP_ELECTRONIC",
+                "MAP_ONLINE",
+                "MATERIAL_FOR_LEARNING_DEVICE",
+                "MEASURING_DEVICE",
+                "MICROFORM",
+                "MINIDISC",
+                "MUSIC",
+                "MUSIC_BLURAY",
+                "MUSIC_CD",
+                "MUSIC_CD_MP3",
+                "MUSIC_CDROM",
+                "MUSIC_DVD",
+                "MUSIC_DVDROM",
+                "MUSIC_ELECTRONIC",
+                "MUSIC_GRAMOPHONE",
+                "MUSIC_ONLINE",
+                "MUSIC_REEL_AUDIO_TAPE",
+                "MUSIC_TAPE",
+                "MUSIC_VIDEOTAPE",
+                "NINTENDO_3DS",
+                "NINTENDO_64",
+                "NINTENDO_DS",
+                "NINTENDO_GAMECUBE",
+                "NINTENDO_SWITCH",
+                "OBJECT",
+                "ORIGINAL_ART",
+                "OTHER",
+                "PAINTING",
+                "PICTURE_BOOK",
+                "PICTURE_BOOK_CD",
+                "PICTURE_BOOK_CDROM",
+                "PICTURE_BOOK_DVD",
+                "PICTURE_BOOK_DVDROM",
+                "PICTURE_BOOK_ELECTRONIC",
+                "PICTURE_BOOK_ONLINE",
+                "PICTURE_CARD",
+                "PICTURE_TAPE",
+                "PODCAST",
+                "POSTCARD",
+                "POSTER",
+                "PHOTO",
+                "PHOTO_CD",
+                "PHOTO_REPRODUCTION",
+                "PLANK",
+                "PLAYSTATION",
+                "PLAYSTATION_2",
+                "PLAYSTATION_3",
+                "PLAYSTATION_4",
+                "PLAYSTATION_5",
+                "PLAYSTATION_VITA",
+                "PRACTICE_MODEL",
+                "PSP",
+                "PUBLISHER_REVIEW",
+                "PUZZLE",
+                "QUESTIONS_ANSWERS",
+                "REVIEW",
+                "REVIEW_ELECTRONIC",
+                "REVIEW_ONLINE",
+                "SHEET_MUSIC",
+                "SHEET_MUSIC_CD",
+                "SHEET_MUSIC_CDROM",
+                "SHEET_MUSIC_DVD",
+                "SHEET_MUSIC_ELECTRONIC",
+                "SHEET_MUSIC_GRAMOPHONE",
+                "SHEET_MUSIC_ONLINE",
+                "SHEET_MUSIC_REEL_AUDIO_TAPE",
+                "SHEET_MUSIC_TAPE",
+                "SHEET_MUSIC_VIDEOTAPE",
+                "SLIDES",
+                "SOUND_RECORDING",
+                "SOUND_RECORDING_CD",
+                "SOUND_RECORDING_CD_MP3",
+                "SOUND_RECORDING_CDROM",
+                "SOUND_RECORDING_DVD",
+                "SOUND_RECORDING_DVDROM",
+                "SOUND_RECORDING_ELECTRONIC",
+                "SOUND_RECORDING_GRAMOPHONE",
+                "SOUND_RECORDING_ONLINE",
+                "SOUND_RECORDING_REEL_AUDIO_TAPE",
+                "SOUND_RECORDING_TAPE",
+                "SOUND_RECORDING_VIDEOTAPE",
+                "SOUNDTRACK",
+                "SYMBOL_CARDS",
+                "TAPESTRY",
+                "TECHNICAL_DRAWING",
+                "THEATER_PERFORMANCE",
+                "THEATER_PUPPET",
+                "TOPIC_BOX",
+                "TOY",
+                "TRANSPARENT",
+                "TV_SERIES_BLURAY",
+                "TV_SERIES_BLURAY_3D",
+                "TV_SERIES_BLURAY_4K",
+                "TV_SERIES_DVD",
+                "TV_SERIES_ELECTRONIC",
+                "TV_SERIES_ONLINE",
+                "TV_SERIES_VIDEOTAPE",
+                "WATERCOLOR",
+                "WEBSITE",
+                "WII",
+                "WII_U",
+                "WORD_CARDS",
+                "XBOX",
+                "XBOX_360",
+                "XBOX_ONE",
+                "XBOX_SERIES_X",
+                "YEARBOOK",
+                "YEARBOOK_CD",
+                "YEARBOOK_CDROM",
+                "YEARBOOK_ELECTRONIC",
+                "YEARBOOK_ONLINE",
+                "BOOK_MULTIPLE_COPIES",
+                "NINTENDO_SWITCH_2"
+              ]
+            },
+            "display": {
+              "description": "Display of specific material type enums",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "materialUnit": {
+      "description": "Physical description of a material type unit, e.g. a book, one or more dvds etc.",
+      "type": "object",
+      "javaName": "materialUnit",
+      "additionalProperties": false,
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "description": "Assembling data from all the other properties, separated by a comma",
+          "origin": "Marc field 300abceln",
+          "type": "string",
+          "javaName": "materialUnitSummary"
+        },
+        "additionalDescription": {
+          "description": "Other physical description, eg. illustrations, color or b/w, mono/stereo, rpm",
+          "origin": "Marc field 300b",
+          "type": "string",
+          "javaName": "materialUnitAdditionalDescription"
+        },
+        "extent": {
+          "description": "Number of pages, tab (books, articles etc.) or playingtime (cd, dvd etc.)",
+          "origin": "Marc field 300al",
+          "type": "string",
+          "javaName": "materialUnitExtent"
+        },
+        "playingTime": {
+          "description": "The playing time of the material unit",
+          "type": "string",
+          "origin": "Extracted from Marc field 300l"
+        },
+        "startPage": {
+          "description": "The first page number in a page range, if applicable",
+          "type": "string",
+          "origin": "Extracted from Marc field 300a"
+        },
+        "endPage": {
+          "description": "The last page number in a page range, if applicable",
+          "type": "string",
+          "origin": "Extracted from Marc field 300a"
+        },
+        "numberAndType": {
+          "description": "Number and type of other materials than books/text, e.g. 1 cd, 2 dvds etc.",
+          "origin": "Marc field 300n",
+          "type": "string",
+          "javaName": "materialUnitNumberAndType"
+        },
+        "size": {
+          "description": "Size of the material unit",
+          "origin": "Marc field 300c",
+          "type": "string",
+          "javaName": "materialUnitSize"
+        },
+        "technicalInformation": {
+          "description": "Technical formats, e.g. Playstation 4, blu-ray",
+          "origin": "Marc field 300e",
+          "type": "string",
+          "javaName": "materialUnitTechnicalInformation"
+        }
+      }
+    },
+    "mood": {
+      "description": "Subject describing the reading experience and mood",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display"],
+      "properties": {
+        "type": {
+          "description": "The subject type",
+          "enum": ["MOOD", "MOOD_CHILDREN"],
+          "type": "string",
+          "javaName": "MoodType"
+        },
+        "display": {
+          "description": "The actual specific mood subject",
+          "type": "string",
+          "origin": "Marc field 665n or 664n"
+        },
+        "rating": {
+          "description": "The connected subjects rating",
+          "enum": [1, 2, 3, 4, 5],
+          "type": "integer",
+          "origin": "Marc field 664y",
+          "javaName": "ChildrenMoodRating"
+        }
+      }
+    },
+    "narrativeTechnique": {
+      "description": "Subject describing the narrative perspective, style and tempo",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display"],
+      "properties": {
+        "type": {
+          "description": "The subject type",
+          "enum": ["PERSPECTIVE", "STYLE", "TEMPO"],
+          "type": "string",
+          "javaName": "NarrativeTechniqueType"
+        },
+        "display": {
+          "description": "The actual specific narrative technique subject",
+          "type": "string",
+          "origin": "Marc field 665rst"
+        }
+      }
+    },
+    "note": {
+      "description": "A note about the work or manifestation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display"],
+      "properties": {
+        "type": {
+          "description": "The type of note - e.g. note about original version, references etc, not_specified if not known",
+          "origin": "Marc field 501=system_requirements, 502=original_title, 506=dissertation, 507=occasion, 509=arrangement, 512=description, 517=restrictions 520=original_version, 532=references",
+          "enum": [
+            "CONNECTION_TO_OTHER_WORKS",
+            "DESCRIPTION_OF_MATERIAL",
+            "DISSERTATION",
+            "MUSICAL_ENSEMBLE_OR_CAST",
+            "NOT_SPECIFIED",
+            "OCCASION_FOR_PUBLICATION",
+            "ORIGINAL_TITLE",
+            "ORIGINAL_VERSION",
+            "REFERENCES",
+            "RESTRICTIONS_ON_USE",
+            "TYPE_OF_SCORE",
+            "FREQUENCY",
+            "EDITION",
+            "TECHNICAL_REQUIREMENTS",
+            "ESTIMATED_PLAYING_TIME_FOR_GAMES",
+            "EXPECTED_PUBLICATION_DATE",
+            "WITHDRAWN_PUBLICATION",
+            "CONTAINS_AI_GENERATED_CONTENT"
+          ],
+          "type": "string",
+          "javaName": "NoteType"
+        },
+        "heading": {
+          "description": "Heading before note",
+          "type": "string"
+        },
+        "display": {
+          "description": "The actual notes",
+          "origin": "Marc field 501, 502, 506, 507, 509, 512, 517, 520, 532 /DKABM - dc:description",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "urls": {
+          "description": "A link and possible link text",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/accessUrl"
+          }
+        }
+      }
+    },
+    "manifestationPart": {
+      "description": "An analytic title entry with creator, title, subject and DK5-classification; used for music tracks, sheet music content or literature analysis (book articles about literary works)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "object",
+          "description": "The title of the entry (music track or title of a literary analysis)",
+          "origin": "Marc field 795a",
+          "properties": {
+            "display": {
+              "description": "Optional. Title for display",
+              "origin": "Marc field 795acup - from field WITHOUT *y0",
+              "type": "string"
+            },
+            "forSearchIndexOnly": {
+              "description": "Optional. Title variant for search indexes only",
+              "origin": "Marc field 795a - from field WITH *y0",
+              "type": "string"
+            }
+          }
+        },
+        "creators": {
+          "description": "The creator of the music track or literary analysis",
+          "origin": "Marc field 770/780",
+          "type": "object",
+          "javaName": "ManifestationPartCreators",
+          "properties": {
+            "persons": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/person"
+              }
+            },
+            "corporations": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/corporation"
+              }
+            }
+          },
+          "schema_org": "https://schema.org/creator"
+        },
+        "classifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/classification"
+          },
+          "description": "Classification of this entry (music track or literary analysis)",
+          "origin": "Marc field 652i"
+        },
+        "subjects": {
+          "type": "object",
+          "javaName": "ManifestationPartSubjects",
+          "properties": {
+            "subjects": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/subject"
+              }
+            },
+            "persons": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/person"
+              }
+            },
+            "corporations": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/corporation"
+              }
+            },
+            "timePeriods": {
+              "type": "array",
+              "items": {
+                "$ref": "common-jed-tags.json#/definitions/timePeriod"
+              }
+            }
+          },
+          "description": "Subjects of this entry (music track or literary analysis)",
+          "origin": "Marc field 666"
+        },
+        "contributorsFromDescription": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional contributor to this entry (music track or literary analysis) as described on the publication. E.g. 'arr.: H. Cornell'",
+          "origin": "Marc field 795f"
+        },
+        "creatorsFromDescription": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional creator to this entry (music track or literary analysis) as described on the publication. E.g. 'arr.: H. Cornell'",
+          "origin": "Marc field 795ej"
+        },
+        "playingTime": {
+          "type": "string",
+          "description": "The duration of the music track",
+          "origin": "Marc field 795l"
+        }
+      }
+    },
+    "relatedPublication": {
+      "description": "Notes about relations to this book/periodical/journal, - like previous names or related journals, or publications in different form",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading"],
+      "properties": {
+        "heading": {
+          "description": "Notes describing the relation of the related periodical/journal/publication",
+          "origin": "Marc field 860-879i plus autogenerated text based on the origin of the 860-879 field, or 523a",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title of the related periodical/journal",
+          "origin": "Marc field 860-879tc",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isbn": {
+          "description": "ISBN of the related publication",
+          "origin": "Marc field 523z",
+          "type": "string"
+        },
+        "issn": {
+          "description": "ISSN of the related periodical/journal/publication",
+          "origin": "Marc field 860-879z or 523z",
+          "type": "string"
+        },
+        "faust": {
+          "description": "Faust of the related periodical/journal/publication",
+          "origin": "Marc field 526n",
+          "type": "string"
+        },
+        "urls": {
+          "description": "URLs of the related publication and possible link text",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/accessUrl"
+          }
+        }
+      }
+    },
+    "relations": {
+      "description": "Other kinds of manifestations related to this manifestation, like reviews or creator descriptions",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "continuedIn": {
+          "description": "The story of this article is continued in this or these other article(s)",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#continuedIn",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "continues": {
+          "description": "This story of this article actually started in this or these other article(s)",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#continues",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "discussedIn": {
+          "description": "The contents of this articles is also discussed in these articles",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#discussedIn",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "discusses": {
+          "description": "The article discusses the content of these articles",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#discusses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasAdaptation": {
+          "description": "This story is adapted in this or these movie(s)",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasAdaptation",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasAnalysis": {
+          "description": "The contents of this manifestation is analysed in these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasAnalysis",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasCreatorDescription": {
+          "description": "The creator of this manifestation is portrayed in these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasCreatorDescription",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasDescriptionFromPublisher": {
+          "description": "The publisher of this manifestation has made a description of the content",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasDescriptionFromPublisher",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasManuscript": {
+          "description": "This movie is based on this manuscript",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasManuscript",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasReusedReview": {
+          "description": "This manifestation has a 'materialevurdering' that was originally made for another manifestation, but it is still relevant (e.g. book/ebook)",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasReusedReview",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasReview": {
+          "description": "This manifestation has these reviews",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasReview",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasSoundtrack": {
+          "description": "This movie or game has this sound track",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#hasSoundtrack",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isAdaptationOf": {
+          "description": "This movie is based on this or these books",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isAdaptationOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isAnalysisOf": {
+          "description": "This manifestation is an analysis of these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isAnalysisOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isDescriptionFromPublisherOf": {
+          "description": "This is a description from the original publisher of these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isDescriptionFromPublisherOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isManuscriptOf": {
+          "description": "This movie is based on this manuscript",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isManuscriptOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isReusedReviewOf": {
+          "description": "This 'materialevurdering' can also be used to review these relevant manifestations, even though it was originally made for another publication",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isReusedReviewOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isReviewOf": {
+          "description": "This manifestation is a review of these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isReviewOf",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isSoundtrackOfGame": {
+          "description": "This sound track for a game is related to these games",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isSoundtrackOfGame",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isSoundtrackOfMovie": {
+          "description": "This sound track for a movie is related to these movies",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isSoundtrackOfMovie",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasTrack": {
+          "description": "This album has these tracks",
+          "origin": "http://oss.dbc.dk/rdf/dbcbib#hasTrack",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isPartOfAlbum": {
+          "description": "This music track is part of these albums",
+          "origin": "http://oss.dbc.dk/rdf/dbcbib#isPartOfAlbum",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isPartOfManifestation": {
+          "description": "This article or book part can be found in these manifestations",
+          "origin": "http://oss.dbc.dk/rdf/dbcbib#isPartOfManifestation",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "reviewElement": {
+      "description": "If this manifestation is a review, then content from the review is found here",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "description": "a Danish heading for this content: e.g. 'Vurdering'",
+          "type": "string"
+        },
+        "content": {
+          "description": "The actual text from the review",
+          "type": "string"
+        },
+        "contentSubstitute": {
+          "description": "The text from the review with PID instead of titles for other works mentioned in the text",
+          "type": "string"
+        },
+        "pidList": {
+          "description": "List of pid's that are related to the reviewed manifestation",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "description": "The type of text from the review",
+          "type": "string",
+          "enum": [
+            "DESCRIPTION",
+            "ABSTRACT",
+            "EVALUATION",
+            "SIMILAR_MATERIALS",
+            "AUDIENCE",
+            "ACQUISITION_RECOMMENDATIONS",
+            "CONCLUSION"
+          ]
+        }
+      }
+    },
+    "person": {
+      "description": "Details about a person, name, role etc.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "nameSort", "roles", "type"],
+      "properties": {
+        "display": {
+          "type": "string",
+          "description": "The person's whole name in normal order possibly followed by birthday in parentheses",
+          "origin": "Marc field 100,239,600,700,720,770,900 / DKABM - dc:creator"
+        },
+        "nameSort": {
+          "type": "string",
+          "description": "The person's full name inverted",
+          "origin": "Marc field 100,239,700,720 / DKABM dc:creator xsi:type='oss:sort'"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the person",
+          "origin": "Marc field 100,239,700,720h"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the person",
+          "origin": "Marc field 100,239,700,720a"
+        },
+        "birthYear": {
+          "type": "string",
+          "description": "Birth year of the person",
+          "origin": "Marc field 100,239,700,720c"
+        },
+        "romanNumeral": {
+          "type": "string",
+          "description": "A roman numeral added to the person, like Christian IV",
+          "origin": "Marc field 100,239,700e"
+        },
+        "attributeToName": {
+          "type": "string",
+          "description": "Added information about the person, like Henri, konge af Frankrig",
+          "origin": "Marc field 100,239,700f"
+        },
+        "aliases": {
+          "description": "Creator aliases, creators behind used pseudonym",
+          "origin": "Marc field 900",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "roles": {
+          "description": "A list of which kinds of contributions this person made to this creation",
+          "origin": "Marc field 100,239,700 subfield 4 / DKABM - dc:creator xsi:type='dkdcplus:<function_code>'",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/role"
+          }
+        },
+        "type": {
+          "description": "The type of subject/creator/contributor, when person is listed as such",
+          "enum": ["PERSON"],
+          "type": "string",
+          "javaName": "PersonType"
+        }
+      }
+    },
+    "physicalDescription": {
+      "description": "Physical description of this manifestation like extent (pages/minutes), illustrations etc.",
+      "type": "object",
+      "additionalProperties": false,
+      "schema_org": "https://schema.org/materialExtent",
+      "origin": "Marc field 300,501,512 / DKABM dc:format and dcterms:extent",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "description": "A summary of the physical description of this manifestation like extent (pages/minutes), illustrations etc.",
+          "origin": "Marc field 300,501,512 / DKABM dc:format and dcterms:extent",
+          "type": "string"
+        },
+        "accompanyingMaterial": {
+          "description": "Material that comes with the manifestation (bilag)",
+          "origin": "Marc field 300d",
+          "type": "string"
+        },
+        "additionalDescription": {
+          "description": "Additional physical description of the manifestation (e.g illustrations etc)",
+          "origin": "Marc field 300b",
+          "type": "string"
+        },
+        "extent": {
+          "description": "Extent of the manifestation like pages and number of items",
+          "origin": "Marc field 300a and DKABM dcterms:extent",
+          "type": "string"
+        },
+        "numberOfPages": {
+          "description": "Number of pages of the manifestation as number",
+          "origin": "Marc field 300a and DKABM dcterms:extent",
+          "type": "integer"
+        },
+        "numberOfUnits": {
+          "description": "Number of units, like 3 cassettes, or 1 score etc.",
+          "origin": "Marc field 300n and DKABM dc:format",
+          "type": "string"
+        },
+        "playingTime": {
+          "description": "The playing time of the manifestation (e.g 2 hours 5 minutes)",
+          "origin": "Marc field 300l, 512a",
+          "type": "string"
+        },
+        "requirements": {
+          "description": "The necessary equipment to use the material",
+          "origin": "Marc field 501ia",
+          "type": "string"
+        },
+        "size": {
+          "description": "Size of the manifestation",
+          "origin": "Marc field 300c",
+          "type": "string"
+        },
+        "technicalInformation": {
+          "description": "Technical information about the manifestation (e.g blu-ray disc)",
+          "origin": "Marc field 300e",
+          "type": "string"
+        },
+        "textVsIllustrations": {
+          "description": "Ratio of text vs. illustration from 1-5 as a number, where 1 means no illustrations and 5 means illustrations on all pages",
+          "origin": "Marc field 300b?",
+          "type": "number"
+        }
+      }
+    },
+    "publicationYear": {
+      "description": "A publication year",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "display": {
+          "type": "string",
+          "description": "The publication year and possible end year as text",
+          "schema_org": "https://schema.org/datePublished"
+        },
+        "year": {
+          "description": "The publication year as integer",
+          "type": "integer"
+        },
+        "endYear": {
+          "description": "The publication end year as integer",
+          "type": "integer"
+        },
+        "frequency": {
+          "description": "The publication frequency of the manifestation as text, e.g 'ugentlig/weekly'",
+          "type": "string"
+        }
+      }
+    },
+    "range": {
+      "description": "Range of numbers with either beginning of range or end of range or both e.g.  6-10, 1980-1999",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "type"],
+      "properties": {
+        "begin": {
+          "description": "The beginning of the range of numbers",
+          "type": "integer"
+        },
+        "end": {
+          "description": "The end of the range of numbers",
+          "type": "integer"
+        },
+        "display": {
+          "description": "The range of numbers as a displayable text, if begin=10 and end=12 then '10-12', if begin=1980 and end=1980 then '1980'",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of subject, when range is listed as a subject",
+          "enum": ["TIME_PERIOD", "MUSIC_TIME_PERIOD", "AGE", "PLAYERS"],
+          "type": "string",
+          "javaName": "RangeType"
+        }
+      }
+    },
+    "role": {
+      "description": "A role defining which contribution this creator or contributor made in this creation, as a function code and a text in singular and plural, 'ill', 'illustrator', 'illustratorer' ",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["functionCode", "function"],
+      "properties": {
+        "functionCode": {
+          "type": "string",
+          "description": "The code for the type of creator or contributor, e.g. 'aut' for author, 'ill' for illustrator etc",
+          "origin": "Marc field 100,700 subfield 4 / DKABM - dc:creator xsi:type='dkdcplus:<function_code>'"
+        },
+        "function": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The type of creator/contributor as text in singular and plural in Danish, e.g. forfatter/forfattere, komponist/komponister etc",
+          "origin": "Translation of the functionCode to displayable text",
+          "required": ["plural", "singular"],
+          "properties": {
+            "plural": {
+              "type": "string",
+              "description": "The type of creator/contributor as text in plural in Danish, e.g. forfattere, komponister, instruktører etc",
+              "origin": "Translation of the functionCode to displayable text"
+            },
+            "singular": {
+              "type": "string",
+              "description": "The type of creator/contributor as text in singular in Danish, e.g. forfatter, komponist, instruktør etc",
+              "origin": "Translation of the functionCode to displayable text"
+            }
+          }
+        }
+      }
+    },
+    "schoolUse": {
+      "description": "Is this material for use in schools (folkeskole/ungdomsuddannelse) or is this material for use in schools by the teacher (folkeskole only)",
+      "origin": "Marc field 008o 990b",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "display"],
+      "properties": {
+        "code": {
+          "description": "Is this material for use in schools (folkeskole/ungdomsuddannelse) or is this material for use in schools by the teacher (folkeskole only) as enum",
+          "type": "string",
+          "enum": ["FOR_SCHOOL_USE", "FOR_TEACHER"],
+          "origin": "Marc field 008o 990b / DKABM dcterms:audience",
+          "javaName": "SchoolUseCode"
+        },
+        "display": {
+          "description": "Is this material for use in schools (folkeskole/ungdomsuddannelse) 'til skolebrug' or is this material for use in schools by the teacher (folkeskole only) 'til læreren' as displayable text",
+          "type": "string",
+          "origin": "Marc field 008o 990b / DKABM dcterms:audience",
+          "javaName": "SchoolUseDisplay"
+        }
+      }
+    },
+    "series": {
+      "origin": "Marc field 440, 526, 845, 245a (multivolume) / DKABM - dc:title series, dc:description series",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the series",
+          "origin": "Marc field 440, 526, 845, 245a (multivolume) / DKABM - dc:title series, dc:description series"
+        },
+        "alternativeTitles": {
+          "description": "A alternative title to the popular title of the series",
+          "origin": "Marc field 945",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isPopular": {
+          "type": "boolean",
+          "description": "Information about whether this is a popular series or general series",
+          "origin": "Marc field 845"
+        },
+        "matchLanguage": {
+          "description": "The main singular language of the work's content",
+          "origin": "First marc field 041a or first marc field 041p",
+          "$ref": "#/definitions/language"
+        },
+        "numberInSeries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["display", "number"],
+          "description": "The number in the series as text quotation and a number",
+          "origin": "Marc field 440vV, 845vV",
+          "properties": {
+            "display": {
+              "type": "string",
+              "description": "The number in the series as text, quoted form the publication, e.g. 'Vol. IX'",
+              "origin": "Marc field 440v, 845v"
+            },
+            "number": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "The number in the series as number, example: 'display': 'Vol. IX'; 'number': '9'",
+              "origin": "Marc field 440V, 845V"
+            }
+          }
+        },
+        "parallelTitles": {
+          "description": "A parallel title to the main 'title' of the series, in a different language",
+          "origin": "Marc subfield 440p",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "readThisFirst": {
+          "type": "boolean",
+          "description": "Information about whether this work in the series should be read first",
+          "origin": "Marc field 845b"
+        },
+        "readThisWhenever": {
+          "type": "boolean",
+          "description": "Information about whether this work in the series can be read without considering the order of the series, it can be read at any time",
+          "origin": "Marc field 845c"
+        },
+        "titlesForSearch": {
+          "description": "Titles of the series including number for search indexes",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "origin": "Marc field 440, 526, 845, 245a (multivolume) / DKABM - dc:title series, dc:description series"
+        },
+        "typeOfSeries": {
+          "description": "Type of series, either publisher series (i.e. 'a Penguin Book'), or regular series title (i.e. 'De 5')",
+          "type": "string",
+          "enum": ["PUBLISHER_SERIES", "REGULAR_SERIES"]
+        },
+        "identifyingAddition": {
+          "description": "identifyingAddition additional information added to distinguish series i.e. (julebøger)",
+          "type": "string",
+          "origin": "Marc field 845ø"
+        }
+      }
+    },
+    "setting": {
+      "description": "Subject describing the setting",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display"],
+      "properties": {
+        "type": {
+          "description": "The subject type",
+          "enum": ["REALITY", "ENVIRONMENT"],
+          "type": "string",
+          "javaName": "SettingType"
+        },
+        "display": {
+          "description": "The actual specific setting subject",
+          "type": "string",
+          "origin": "Marc field 665um"
+        }
+      }
+    },
+    "sheetMusicCategories": {
+      "description": "Material that can be identified as sheet music",
+      "type": "object",
+      "origin": "Marc field 509, 512, 559, 652, 666",
+      "additionalProperties": false,
+      "properties": {
+        "instruments": {
+          "description": "The types of instruments material covers",
+          "origin": "Marc field 652imnopqrv, 666n",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "choirTypes": {
+          "description": "The types of choir material covers",
+          "origin": "Marc field 652imnopqrv, 666mn",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "forMusicalExercise": {
+          "description": "Is true when material is intended for practising (in combination with an instrument)",
+          "origin": "Marc field 559a, 652mopv, 666o",
+          "type": "boolean"
+        },
+        "chamberMusicTypes": {
+          "description": "The types of chamber music material covers",
+          "origin": "Marc field 509a, 512a, 652imnopqrv",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "orchestraTypes": {
+          "description": "The types of orchestra material covers",
+          "origin": "Marc field 652imnopqrv",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "subject": {
+      "description": "Details about the subject of this work",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "display"],
+      "properties": {
+        "type": {
+          "description": "The type of subject - 'location', 'time period' etc., 'topic' if not specific kind of subject term",
+          "enum": [
+            "TOPIC",
+            "LOCATION",
+            "FICTIONAL_CHARACTER",
+            "LAESEKOMPASSET",
+            "MEDICAL_SUBJECT_HEADING",
+            "MUSIC_COUNTRY_OF_ORIGIN",
+            "MUSIC_TIME_PERIOD",
+            "MUSICAL_INSTRUMENTATION",
+            "NATIONAL_AGRICULTURAL_LIBRARY",
+            "TIME_PERIOD",
+            "TITLE",
+            "FILM_NATIONALITY",
+            "LIBRARY_OF_CONGRESS_SUBJECT_HEADING",
+            "FICTIONAL_LOCATION"
+          ],
+          "origin": "Marc field 033, 600, 610, 620, 621, 622, 630, 631, 632, 633, 634, 645, 650, 651, 660, 661, 662, 665, 666, 667, 670 / DKABM - dc:subject, dcterms:spatial, dcterms:temporal",
+          "type": "string",
+          "javaName": "SubjectType"
+        },
+        "display": {
+          "type": "string",
+          "description": "The actual subject",
+          "origin": "Marc field 033, 600, 610, 620, 621, 622, 630, 631, 632, 633, 634, 645, 650, 651, 660, 661, 662, 665, 666, 667, 670 / DKABM - dc:subject, dcterms:spatial, dcterms:temporal"
+        },
+        "language": {
+          "description": "Language of material",
+          "origin": "Marc field 667 subfield 8 or hardcoded with data from field 666",
+          "$ref": "#/definitions/language"
+        },
+        "local": {
+          "type": "boolean",
+          "description": "Information about whether this subject comes from a local public or school library or a local bibliography",
+          "origin": "Marc field 001"
+        }
+      }
+    },
+    "subjects": {
+      "description": "Subjects for this work/manifestation",
+      "type": "object",
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/subject"
+          }
+        },
+        "moods": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/mood"
+          }
+        },
+        "narrativeTechniques": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/narrativeTechnique"
+          }
+        },
+        "settings": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/setting"
+          }
+        },
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/person"
+          }
+        },
+        "corporations": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/corporation"
+          }
+        },
+        "timePeriods": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/timePeriod"
+          }
+        },
+        "childrenTopics": {
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/childrenTopics"
+          }
+        }
+      }
+    },
+    "tableOfContents": {
+      "description": "Quotation of the manifestation's table of contents or similar content list",
+      "origin": "Marc field 530 (full content) 534 (partial content) / possibly DKABM - dc:description",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "listOfContent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tableOfContents"
+          }
+        }
+      }
+    },
+    "timePeriod": {
+      "description": "The time period this entity covers as years in numbers",
+      "origin": "Marc field 634,666,667 / DKABM dcterms:temporal",
+      "schema_org": "https://schema.org/temporalCoverage",
+      "$ref": "common-jed-tags.json#/definitions/range"
+    },
+    "title": {
+      "description": "Title of the entity",
+      "origin": "Marc field 245 / DKABM - dc:title",
+      "type": "string",
+      "schema_org": "https://schema.org/name"
+    },
+    "titleFull": {
+      "description": "The full title of the entity including subtitles etc",
+      "origin": "Marc field 245 / DKABM - dc:title xsi:type='dkdcplus:full'",
+      "type": "string"
+    },
+    "titleOriginal": {
+      "description": "The title of the work that this expression/manifestation is translated from or based on. The original title(s) of a film which has added distribution titles in marc field 239 and 739",
+      "origin": "Marc field 241ar, 245ax on some films / DKABM: dc:source ",
+      "type": "string"
+    },
+    "titleParallel": {
+      "description": "A parallel title to the main title of the entity, in a different language as found on the publication",
+      "origin": "Marc field 245pqrs",
+      "type": "string"
+    },
+    "titlePlusLanguage": {
+      "description": "The title of the entity with the language of the entity in parenthesis after. This field is only generated for non-danish titles.",
+      "origin": "jed -tags Main title and MainLanguage",
+      "type": "string"
+    },
+    "titleSort": {
+      "description": "The sorted title of the entity",
+      "origin": "Marc field 239,245 / DKABM - dc:title",
+      "type": "string"
+    },
+    "titleStandard": {
+      "description": "The standard title of the entity, used for music and movies",
+      "origin": "Marc field 239tvuø7",
+      "type": "string"
+    },
+    "titleTranslated": {
+      "description": "Danish translation of the main title, not found on the original publication",
+      "origin": "Marc field 242acno",
+      "type": "string"
+    },
+    "tvSeries": {
+      "description": "The title elements for tv-series",
+      "origin": "Marc field 239, 245, 845",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "The title of the tv-series",
+          "type": "string",
+          "origin": "Marc field 245a"
+        },
+        "danishLaunchTitle": {
+          "description": "The Danish launch title of the tv-series",
+          "type": "string",
+          "origin": "Marc field 239t"
+        },
+        "episodeTitles": {
+          "description": "The episode title of the tv-series",
+          "origin": "Marc field 245c",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "season": {
+          "description": "The season number of the tv-series",
+          "origin": "Marc field 245gø or 239ø",
+          "$ref": "#/definitions/tvSeriesNumber"
+        },
+        "volume": {
+          "description": "The volume number of the tv-series",
+          "origin": "Marc field 245gø or 239ø",
+          "$ref": "#/definitions/tvSeriesNumber"
+        },
+        "episode": {
+          "description": "The episode number of the tv-series",
+          "origin": "Marc field 245gø or 845v",
+          "$ref": "#/definitions/tvSeriesNumber"
+        },
+        "disc": {
+          "description": "The disc numberof the tv-series",
+          "origin": "Marc field 245gø",
+          "$ref": "#/definitions/tvSeriesNumber"
+        }
+      }
+    },
+    "tvSeriesNumber": {
+      "description": "The number of this tv-series episode/season/volume/disc as string and numbers",
+      "origin": "Marc field 239, 245",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "type": "string",
+          "description": "The number of the tv-series element as the original string e.g. 'afsnit 12-13'"
+        },
+        "onlyNumbersAsString": {
+          "type": "string",
+          "description": "Only the numbers of the tv-series element as a string e.g. '12-13'"
+        },
+        "numbers": {
+          "type": "array",
+          "description": "The numbers of the tv-series element as integers e.g. [12, 13]",
+          "origin": "Marc field 245c",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "universe": {
+      "description": "Literary/movie universe this work is part of e.g. Wizarding World, Marvel Universe",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the universe",
+          "origin": "Marc field 846a"
+        },
+        "alternativeTitles": {
+          "description": "The alternative titles of the universe",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "origin": "Marc field 945"
+        }
+      }
+    },
+    "workId": {
+      "description": "Unique identification of the work based on persistent-work-id e.g work-of:870970-basis:54029519. The persistent-work-id is derived from work clusters in Corepo",
+      "origin": "Persistent work-id in Corepo",
+      "type": "string"
+    },
+    "marcId": {
+      "description": "Unique identification of the MARC representation of the work or manifestation to be used for subsequent lookups via the API gateway",
+      "origin": "Marc field 001ab",
+      "type": "string"
+    },
+    "workTypes": {
+      "description": "Worktypes for this work",
+      "origin": "Corepo admin data for work",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "javaName": "JedWorkType",
+        "enum": [
+          "ANALYSIS",
+          "ARTICLE",
+          "BOOKDESCRIPTION",
+          "GAME",
+          "LITERATURE",
+          "MAP",
+          "MOVIE",
+          "MUSIC",
+          "OTHER",
+          "PERIODICA",
+          "PORTRAIT",
+          "REVIEW",
+          "SHEETMUSIC",
+          "TRACK"
+        ]
+      }
+    },
+    "workYear": {
+      "description": "The year this work was originally published or produced",
+      "origin": "Marc field 512,520",
+      "$ref": "common-jed-tags.json#/definitions/publicationYear"
+    }
+  }
+}
