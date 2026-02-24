@@ -245,7 +245,7 @@
           }
         },
         "all": {
-          "description": "All manifestations of this work",
+          "description": "All manifestations of this work. Some change.",
           "type": "array",
           "items": {
             "$ref": "jed-manifestation-schema.json"
