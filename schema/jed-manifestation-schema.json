@@ -151,6 +151,14 @@
             "type": "string"
           }
         },
+        "audienceGeneral": {
+          "description": "Appropriate audience for this manifestation (new)",
+          "origin": "Marc field 666u, 667u and 517 / DKABM dcterms:audience with possible xsi:type='dkdcplus:pegi' or xsi:type='dkdcplus:medieraad' or dkabm dc:subject xsi:type='dkdcplus:DBCN'",
+          "type": "array",
+          "items": {
+            "$ref": "common-jed-tags.json#/definitions/audienceGeneral"
+          }
+        },
         "ages": {
           "$ref": "common-jed-tags.json#/definitions/range",
           "origin": "Marc field 666u / DKABM dc:subject[ @xsi:type = 'dkdcplus:DBCN'"
@@ -469,6 +477,13 @@
         "$ref": "common-jed-tags.json#/definitions/genreAndForm"
       }
     },
+    "genreForm": {
+      "description": "The genre and (literary) form of this manifestation (new)",
+      "type": "array",
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/genreForm"
+      }
+    },
     "hostPublication": {
       "description": "Details about the host publications of this manifestation",
       "type": "object",
@@ -742,6 +757,22 @@
       "origin": "Corepo object id",
       "type": "string"
     },
+    "periodicalType": {
+      "description": "Code for type of periodical",
+      "origin": "Marc field ",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "A code for the type of periodical",
+          "type": "string"
+        },
+        "display": {
+          "description": "The code as displayable text",
+          "type": "string"
+        }
+      }
+    },
     "physicalDescription": {
       "description": "New physical description of this manifestation like extent (pages/minutes), illustrations etc.",
       "type": "object",
@@ -851,6 +882,43 @@
           "description": "A postfix to the shelfmark, eg. 99.4 Christensen, Inger. f. 1935",
           "type": "string",
           "origin": "Marc field 100,110,239,245"
+        },
+        "creator": {
+          "description": "The creator of the manifestation that the material can be located under on the shelf",
+          "origin": "Marc field 100, 110",
+          "type": "string"
+        },
+        "specialMaterialGroup": {
+          "description": "Code for comics, children's picture books and drama",
+          "origin": "Marc field 038",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "description": "The code",
+              "type": "string"
+            },
+            "display": {
+              "description": "The code as displayable text",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "soundRecording": {
+      "description": "The records type of sound recording - excluding music recordings and its material",
+      "origin": "Marc field 005z",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "A code for the type of sound recording",
+          "type": "string"
+        },
+        "display": {
+          "description": "The code as displayable text",
+          "type": "string"
         }
       }
     },

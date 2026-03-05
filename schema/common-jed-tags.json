@@ -140,6 +140,23 @@
         }
       }
     },
+    "audienceGeneral": {
+      "description": "A single general audience object containing a subject word and a possible associated language",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "description": "Appropriate audience for this manifestation",
+          "origin": "Marc field 666u, 667u and 517 / DKABM dcterms:audience with possible xsi:type='dkdcplus:pegi' or xsi:type='dkdcplus:medieraad' or dkabm dc:subject xsi:type='dkdcplus:DBCN'",
+          "type": "string"
+        },
+        "language": {
+          "description": "The associated language of the audience term, if applicable",
+          "origin": "Marc field 667*8",
+          "$ref": "#/definitions/language"
+        }
+      }
+    },
     "childrenOrAdult": {
       "description": "Is this material for children or adults",
       "type": "object",
@@ -645,6 +662,23 @@
       "type": "string",
       "description": "The genre and (literary) form of this work",
       "origin": "Marc field 008dj, 666om, 505 and more / DKABM dc:subject dkdcplus:genre"
+    },
+    "genreForm": {
+      "type": "object",
+      "description": "The genre and (literary) form of this work (new)",
+      "origin": "Marc fields 008dj, 505, 666om, 667om and more / DKABM dc:subject dkdcplus:genre",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "description": "The genre/form term",
+          "type": "string"
+        },
+        "language": {
+          "description": "Language of the genre/form term, if applicable",
+          "origin": "Marc field 667*8",
+          "$ref": "#/definitions/language"
+        }
+      }
     },
     "identifier": {
       "description": "Identifier for this entity - often used for search indexes",
