@@ -38,11 +38,7 @@
       "type": "object",
       "javaName": "ManifestationTitles",
       "additionalProperties": false,
-      "required": [
-        "main",
-        "full",
-        "sort"
-      ],
+      "required": ["main", "full", "sort"],
       "properties": {
         "main": {
           "description": "The main title(s) of the manifestation, array because some publications contain more than one work",
@@ -206,49 +202,25 @@
               "description": "Level expressed as integer on a scale from 1 to 5",
               "origin": "Marc fields 664sy",
               "type": "integer",
-              "enum": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
+              "enum": [1, 2, 3, 4, 5]
             },
             "illustrationsLevel": {
               "description": "Level expressed as integer on a scale from 1 to 5",
               "origin": "Marc fields 664sy",
               "type": "integer",
-              "enum": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
+              "enum": [1, 2, 3, 4, 5]
             },
             "length": {
               "description": "Level expressed as integer on a scale from 1 to 5",
               "origin": "Marc fields 664sy",
               "type": "integer",
-              "enum": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
+              "enum": [1, 2, 3, 4, 5]
             },
             "realisticVsFictional": {
               "description": "Level expressed as integer on a scale from 1 to 5",
               "origin": "Marc fields 664uy",
               "type": "integer",
-              "enum": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
+              "enum": [1, 2, 3, 4, 5]
             }
           }
         },
@@ -489,10 +461,7 @@
       "type": "object",
       "additionalProperties": false,
       "origin": "Marc field 557, 558 / DKABM dcterms:isPartOf",
-      "required": [
-        "title",
-        "summary"
-      ],
+      "required": ["title", "summary"],
       "properties": {
         "title": {
           "description": "Title of the publication this manifestation can be found in",
@@ -553,11 +522,7 @@
             },
             "code": {
               "description": "The publication type  as enum",
-              "enum": [
-                "NEWSPAPER",
-                "JOURNAL",
-                "OTHER"
-              ],
+              "enum": ["NEWSPAPER", "JOURNAL", "OTHER"],
               "type": "string",
               "javaName": "PublicationTypeEnum"
             }
@@ -603,26 +568,13 @@
       "origin": "Marc field 008 and 009",
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "name"
-      ],
+      "required": ["id", "name"],
       "properties": {
         "id": {
           "description": "ILL material group expressed as integer",
           "type": "integer",
           "javaName": "IllMaterialGroupCode",
-          "enum": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            9,
-            0
-          ]
+          "enum": [1, 2, 3, 4, 5, 6, 7, 9, 0]
         },
         "name": {
           "description": "Displayable, associated and fixed text for the ILL material group",
@@ -698,10 +650,7 @@
       "origin": "Marc field 795/770 / DKABM dcterms:hasPart",
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "parts",
-        "type"
-      ],
+      "required": ["parts", "type"],
       "properties": {
         "heading": {
           "description": "Heading for the music content note",
@@ -853,6 +802,14 @@
         }
       }
     },
+    "selectionCodes": {
+      "description": "Material selection and its target group",
+      "type": "array",
+      "additionalProperties": false,
+      "items": {
+        "$ref": "common-jed-tags.json#/definitions/selectionCode"
+      }
+    },
     "series": {
       "description": "Series for this manifestation",
       "type": "array",
@@ -869,9 +826,7 @@
       "origin": "Marc field 652mo,039",
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "shelfmark"
-      ],
+      "required": ["shelfmark"],
       "properties": {
         "shelfmark": {
           "description": "The actual shelfmark - e.g. information about on which shelf in the library this manifestation can be found, e.g. 99.4",

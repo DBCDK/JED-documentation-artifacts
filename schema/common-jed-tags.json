@@ -1813,6 +1813,22 @@
         }
       }
     },
+    "selectionCode": {
+      "type": "object",
+      "description": "",
+      "origin": "Marc fields 990*b",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "A code for either material selection or the target group for this material",
+          "type": "string"
+        },
+        "display": {
+          "description": "A translated, displayable text for the code",
+          "type": "string"
+        }
+      }
+    },
     "series": {
       "origin": "Marc field 440, 526, 845, 245a (multivolume) / DKABM - dc:title series, dc:description series",
       "type": "object",
