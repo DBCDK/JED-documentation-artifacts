@@ -844,11 +844,11 @@
       "additionalProperties": false,
       "properties": {
         "display": {
-          "description": "The creator of the manifestation",
+          "description": "The display name of the creator",
           "type": "string"
         },
         "sort": {
-          "description": "The sorted creator of the manifestation",
+          "description": "The sort version of the creator name",
           "type": "string"
         }
       }
