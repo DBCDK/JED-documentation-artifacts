@@ -295,6 +295,22 @@
         }
       }
     },
+    "bibliographicCategory": {
+      "description": "Code for bibliographic category",
+      "origin": "Marc field 008t",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "Code for bibliographic category",
+          "type": "string"
+        },
+        "display": {
+          "description": "The code as displayable text",
+          "type": "string"
+        }
+      }
+    },
     "catalogueCodes": {
       "description": "Codes for which part of the Danish National Bibliography this manifestation is part of or codes for local bibliography/catalogue",
       "origin": "Marc field 032ax",
@@ -708,7 +724,7 @@
     },
     "periodicalType": {
       "description": "Code for type of periodical",
-      "origin": "Marc field ",
+      "origin": "Marc field 008h",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -821,6 +837,22 @@
       "description": "Material that can be identified as sheet music",
       "$ref": "common-jed-tags.json#/definitions/sheetMusicCategories"
     },
+    "shelfCreator": {
+      "description": "The creator of the manifestation that the material can be located under on the shelf",
+      "origin": "Marc field 100, 110",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "description": "The creator of the manifestation",
+          "type": "string"
+        },
+        "sort": {
+          "description": "The sorted creator of the manifestation",
+          "type": "string"
+        }
+      }
+    },
     "shelfmark": {
       "description": "Information about on which shelf in the library this manifestation can be found",
       "origin": "Marc field 652mo,039",
@@ -883,6 +915,23 @@
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "specialMaterialGroup": {
+      "description": "Code for comics, children's picture books and drama",
+      "origin": "Marc field 038",
+      "type": "object",
+      "javaName": "specialMaterialGroupNew",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "The code",
+          "type": "string"
+        },
+        "display": {
+          "description": "The code as displayable text",
+          "type": "string"
+        }
       }
     },
     "subjects": {
