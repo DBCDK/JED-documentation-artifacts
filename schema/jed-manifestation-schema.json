@@ -699,6 +699,22 @@
         "$ref": "common-jed-tags.json#/definitions/materialType"
       }
     },
+    "musicShelf": {
+      "description": "Information on music shelving",
+      "origin": "Marc field 039ab",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "description": "The shelf where the material can be found",
+          "type": "string"
+        },
+        "sort": {
+          "description": "The sort version of 'display'",
+          "type": "string"
+        }
+      }
+    },
     "notes": {
       "description": "Notes about the manifestation",
       "origin": "Marc field 501, 502, 505, 508, 512, 520, 534, 559 / DKABM dc:description",
