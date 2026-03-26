@@ -544,6 +544,22 @@
             }
           }
         },
+        "publicationStatus": {
+          "description": "The publication status of the manifestation",
+          "type": "object",
+          "additionalProperties": false,
+          "javaName": "hostPropertyPublicationStatus",
+          "properties": {
+            "display": {
+              "description": "The publication status type as display text",
+              "type": "string"
+            },
+            "code": {
+              "description": "The publication status code",
+              "type": "string"
+            }
+          }
+        },
         "section": {
           "description": "The section of the publication this manifestation can be found in",
           "origin": "Marc field 300a",
@@ -789,6 +805,22 @@
           "origin": "Marc field 300d",
           "type": "string",
           "javaName": "newPhysicalDescriptionAccompanyingMaterial"
+        }
+      }
+    },
+    "publicationStatus": {
+      "description": "The publication status of the manifestation",
+      "type": "object",
+      "javaName": "publicationStatus",
+      "additionalProperties": false,
+      "properties": {
+        "display": {
+          "description": "The publication status type as display text",
+          "type": "string"
+        },
+        "code": {
+          "description": "The publication status code",
+          "type": "string"
         }
       }
     },
