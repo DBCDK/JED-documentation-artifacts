@@ -728,6 +728,10 @@
         "sort": {
           "description": "The sort version of 'display'",
           "type": "string"
+        },
+        "code": {
+          "description": "Code(s) for the shelving information",
+          "type": "string"
         }
       }
     },
