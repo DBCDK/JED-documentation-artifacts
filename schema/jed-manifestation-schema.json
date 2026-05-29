@@ -709,6 +709,98 @@
         }
       }
     },
+    "materialSelection": {
+      "description": "Object containing information about selection status",
+      "origin": "Marc field 990u and 990b",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cataloguedPublicationStatus": {
+          "type": "array",
+          "description": "The publication status of the manifestation",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "NEW_TITLE",
+                  "NEW_EDITION",
+                  "NEW_PRINT"
+                ],
+                "javaName": "cataloguedPublicationStatusENUM"
+              },
+              "searchValues": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "selectionGroup": {
+          "type": "array",
+          "description": "The recommended group (adult, child, school) selected for the manifestation",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ADULT",
+                  "CHILDREN",
+                  "SCHOOL"
+                ],
+                "javaName": "selectionGroupENUM"
+              },
+              "searchValues": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "librarianAssessment": {
+          "type": "array",
+          "description": "The type of library assessment",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "LITERATURE",
+                  "MOVIE",
+                  "MULTIMEDIA"
+                ],
+                "javaName": "librarianAssessmentENUM"
+              },
+              "searchValues": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "display": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
     "materialTypes": {
       "type": "array",
       "items": {
