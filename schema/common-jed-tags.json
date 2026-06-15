@@ -529,6 +529,11 @@
           "items": {
             "$ref": "common-jed-tags.json#/definitions/corporation"
           }
+        },
+        "andOthers": {
+          "description": "Information that there are more corporations as creators/contributors than listed",
+          "origin": "Marc fields 700, 710, 720 subfield g code 1",
+          "type": "boolean"
         }
       }
     },
@@ -1640,6 +1645,11 @@
           "enum": ["PERSON"],
           "type": "string",
           "javaName": "PersonType"
+        },
+        "andOthers": {
+          "description": "Information that there are more creators/contributors than listed",
+          "origin": "Marc fields 700, 710, 720 subfield g code 1",
+          "type": "boolean"
         }
       }
     },
