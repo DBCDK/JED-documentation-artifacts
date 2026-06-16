@@ -116,6 +116,23 @@
             }
           }
         },
+        "retrieverService": {
+          "description": "If this manifestation can be accessed via Retriever then ID and license is provided",
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {
+              "description": "Retriever Id",
+              "origin": "Marc field n01a",
+              "type": "string"
+            },
+            "license": {
+              "description": "Enum stating who can access this article",
+              "type": "string",
+              "enum": ["UNRESTRICTED", "PROFESSIONALS"]
+            }
+          }
+        },
         "interLibraryLoanIsPossible": {
           "description": "Is true when manifestation can be borrowed via interlibrary loan (ILL)",
           "origin": "Marc field 008,096",
