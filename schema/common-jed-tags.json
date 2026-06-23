@@ -1479,6 +1479,14 @@
             "type": "string"
           }
         },
+        "isAdaptationOfDk": {
+          "description": "This movie is based on this or these Danish books",
+          "origin": "http://oss.dbc.dk/rdf/dbcaddi#isAdaptationOfDk",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "isAnalysisOf": {
           "description": "This manifestation is an analysis of these manifestations",
           "origin": "http://oss.dbc.dk/rdf/dbcaddi#isAnalysisOf",
